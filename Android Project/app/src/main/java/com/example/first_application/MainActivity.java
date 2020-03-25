@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Toast.makeText(this, "onCreate 호출 됨",Toast.LENGTH_SHORT).show();
 
         TextInputEditText_email    = findViewById(R.id.TextInputEditText_email);
         TextInputEditText_password = findViewById(R.id.TextInputEditText_password);
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         TextInputEditText_password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -93,6 +97,42 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(this, "onResume 호출 됨",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Toast.makeText(this, "onPause 호출 됨",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Toast.makeText(this, "onStop 호출 됨",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(this, "onDestroy 호출 됨",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Toast.makeText(this, "onStart 호출 됨",Toast.LENGTH_SHORT).show();
+
+    }
+
+    protected void onRestart() {
+        super.onRestart();
+        Toast.makeText(this, "onRestart 호출 됨",Toast.LENGTH_SHORT).show();
+    }
+
     public boolean validation(){
         Log.d( "ID/Password", inputEmail + "/" + inputpassword + "/" + (inputEmail.equals(emailOk)) + "/" + inputpassword.equals(passwordOk));
         return inputEmail.equals(emailOk) && inputpassword.equals(passwordOk);
