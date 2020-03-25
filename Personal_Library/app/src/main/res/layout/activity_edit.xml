@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        >
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/TextView_editSave"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="저장"
+            android:textColor="@color/colorDark"
+            android:textSize="20dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:paddingRight="5dp"
+            android:background="@drawable/btn_transparent"/>
+        <ImageView
+            android:id="@+id/ImageView_editClip"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_clip"
+            android:paddingRight="5dp"
+            android:clickable="true"
+            android:background="@drawable/btn_transparent"/>
+
+        <ImageView
+            android:id="@+id/ImageView_editInternet"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_internet"
+            android:paddingRight="5dp"
+            android:clickable="true"
+            android:background="@drawable/btn_transparent"/>
+
+        <ImageView
+            android:id="@+id/ImageView_editMenu"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_menu"
+            android:paddingRight="5dp"
+            android:clickable="true"
+            android:background="@drawable/btn_transparent"/>
+
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/EditText_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="제목">
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/EditText_oneSentence"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="한줄평"
+        android:ems="10">
+
+    </EditText>
+    
+    <EditText
+        android:id="@+id/EditText_content"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:ems="10"
+        android:hint="내용"
+        android:gravity="top"
+        >
+
+    </EditText>
+    
+
+
+
+</LinearLayout>

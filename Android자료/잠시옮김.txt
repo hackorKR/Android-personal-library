@@ -1,0 +1,33 @@
+온크리트 전에쓰는거 
+    private ArrayList<MainData> arrayList;
+    private MainAdapter mainAdapter;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+
+레이아웃뷰밑에쓰는거
+        recyclerView = (RecyclerView)findViewById(R.id.RecyclerView);
+        linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        arrayList = new ArrayList<>();
+
+        mainAdapter = new MainAdapter(arrayList);
+        recyclerView.setAdapter(mainAdapter);
+
+온클릭안에쓰는거
+MainData mainData = new MainData(R.mipmap.ic_launcher, "안드로이드1", "또 한번더!");
+                arrayList.add(mainData);
+                mainAdapter.notifyDataSetChanged();
+
+
+내가작성한 메인온크리트에 들어가야할것같은것들
+Intent intent = getIntent();
+
+        Bundle bundle = intent.getExtras();
+        String bookTitle = bundle.getString("bookTitle");
+        String bookOneSentence = bundle.getString("bookOneSentence");
+        String bookContent = bundle.getString("bookContent");
+
+        MainData mainData = new MainData(R.mipmap.ic_launcher, bookTitle, bookOneSentence);
+        arrayList.add(mainData);
+        mainAdapter.notifyDataSetChanged();
