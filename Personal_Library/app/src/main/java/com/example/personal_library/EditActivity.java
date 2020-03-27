@@ -40,19 +40,18 @@ public class EditActivity extends AppCompatActivity {
         //bookTitle이라는 key값에 저장된 값이 있는지 확인, 아무값도 들어있지 않으면 ""를 반환
         String bookTitle = sharedPreferences.getString("bookTitle", "");
         String bookOneSentence = sharedPreferences.getString("bookOneSentence", "");
+        String bookContent = sharedPreferences.getString("bookContent", "");
         EditText_title.setText(bookTitle);
         EditText_oneSentence.setText(bookOneSentence);
-
-        //bookTitle에 저장되어있던 값을 EditText에 옮겼고 그 값을 확인하는 Toast
-        String toastTest = EditText_title.getText().toString();
-        Toast.makeText(EditActivity.this, toastTest, Toast.LENGTH_SHORT).show();
-
+        EditText_content.setText(bookContent);
 
         //Save버튼 명시적으로 MainActivity로 넘어가는 버튼
         TextView_editSave = (TextView)findViewById(R.id.TextView_editSave);
         TextView_editSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(EditActivity.this, "Explicit Intent", Toast.LENGTH_SHORT).show();
+
                 String bookTitle = EditText_title.getText().toString();
                 String bookOneSentence = EditText_oneSentence.getText().toString();
                 String bookContent = EditText_content.getText().toString();
@@ -62,13 +61,6 @@ public class EditActivity extends AppCompatActivity {
                 intent.putExtra("bookOneSentence", bookOneSentence);
                 intent.putExtra("bookContent", bookContent);
                 startActivity(intent);
-//                String bookTitle = EditText_title.getText().toString();
-//                String bookOneSentence = EditText_oneSentence.getText().toString();
-//                String bookContent = EditText_content.getText().toString();
-//                intent.putExtra("bookTitle",bookTitle);
-//                intent.putExtra("bookOneSentence",bookOneSentence);
-//                intent.putExtra("bookContent",bookContent);
-
             }
         });
 
@@ -82,6 +74,11 @@ public class EditActivity extends AppCompatActivity {
                 //Uri클래스 - 컨텐츠 프로바이터의 접근 규칙, 즉 컨첸츠 프로바이더의 주소
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.naver.com/"));
                 startActivity(intent);
+
+//                Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+//                pickContactIntent.setType(Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
+//                startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
+
             }
         });
 
@@ -90,21 +87,29 @@ public class EditActivity extends AppCompatActivity {
         ImageView_editClip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(EditActivity.this, "Explicit Intent", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                startActivity(intent);
+                Toast.makeText(EditActivity.this, "Implicit Intent", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
+
+                startActivityForResult(intent, 10);
             }
         });
     }
+
     protected void onStop() {
         super.onStop();
 
         SharedPreferences sharedPreferences = getSharedPreferences(shared, 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
         String bookTitle = EditText_title.getText().toString();
         String bookOneSentence = EditText_oneSentence.getText().toString();
+        String bookContent = EditText_content.getText().toString();
+
         editor.putString("bookTitle", bookTitle);
         editor.putString("bookOneSentence", bookOneSentence);
+        editor.putString("bookContent", bookContent);
+
         editor.commit();
     }
 

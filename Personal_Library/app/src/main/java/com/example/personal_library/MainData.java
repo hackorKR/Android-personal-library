@@ -1,6 +1,8 @@
 package com.example.personal_library;
 
-public class MainData {
+import java.io.Serializable;
+
+public class MainData implements Serializable {
 
     private int ImageView_profile;
     private String TextView_title;
@@ -11,6 +13,11 @@ public class MainData {
         TextView_title = textView_title;
         TextView_content = textView_content;
     }
+
+    public String toString(){
+        return String.format("MainData{imageView_profile='%s', textView_title='%s' ,textView_content='%s'}",ImageView_profile,TextView_title,TextView_content);
+    }
+
 
     public int getImageView_profile() {
         return ImageView_profile;

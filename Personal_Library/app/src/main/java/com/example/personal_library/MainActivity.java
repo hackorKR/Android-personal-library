@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
 
-    String shared = "file";
+    String shared = "file2";
+
+    ArrayList<String> bookTitle = new ArrayList<>();
+    ArrayList<String> bookOneSentence = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +49,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(mainAdapter);
 
         //저장된 값을 불러오기 위해 같은 네임의 파일을 찾는다
-//        SharedPreferences sharedPreferences = getSharedPreferences(shared, 0);
-//        //bookTitle이라는 key값에 저장된 값이 있는지 확인, 아무값도 들어있지 않으면 ""를 반환
+        SharedPreferences sharedPreferences = getSharedPreferences(shared, 0);
+        //bookTitle이라는 key값에 저장된 값이 있는지 확인, 아무값도 들어있지 않으면 ""를 반환
+        for(int i =0; i < arrayList.size(); i++){
+            String title = sharedPreferences.getString(bookTitle.get(i), "");
+            String oneSentence = sharedPreferences.getString(bookOneSentence.get(i), "");
+
+            MainData mainData = new MainData(R.mipmap.ic_launcher, title, oneSentence);
+            arrayList.add(mainData);
+            mainAdapter.notifyDataSetChanged();
+            Log.d("만들어짐?", "어?");
+        }
 //        String bookTitle = sharedPreferences.getString("bookTitle", "");
 //        String bookOneSentence = sharedPreferences.getString("bookOneSentence", "");
-//        for(int i = 0; i < sharedPreferences.)
+
 //        EditText_title.setText(bookTitle);
 //        EditText_oneSentence.setText(bookOneSentence);
 
@@ -120,18 +133,18 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(shared, 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 //        String value = EditText_title.getText().toString();
-        ArrayList<String> bookTitle = new ArrayList<>();
-        ArrayList<String> bookOneSentence = new ArrayList<>();
+
 
         for(int i =0; i < arrayList.size(); i++){
-            bookTitle.add(arrayList.get(i).getTextView_title());
-            bookOneSentence.add(arrayList.get(i).getTextView_content());
+            bookTitle.add("bookTitle" + i);
+            bookOneSentence.add("bookOneSentence" + i);
 
-            editor.putString("BookTitle", bookTitle.get(i));
-            editor.putString("BookOneSentence", bookOneSentence.get(i));
+            editor.putString(bookTitle.get(i), arrayList.get(i).getTextView_title());
+            editor.putString(bookOneSentence.get(i), arrayList.get(i).getTextView_content());
         }
 //        editor.putString("bookTitle", value);
         editor.commit();
+
     }
 
     @Override
@@ -150,18 +163,18 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         Toast.makeText(this, "onRestart 호출 됨",Toast.LENGTH_SHORT).show();
 
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
-        Bundle bundle = intent.getExtras();
-        String bookTitle = bundle.getString("bookTitle");
-        String bookOneSentence = bundle.getString("bookOneSentence");
+//        Intent intent = getIntent();
+//        finish();
+//        startActivity(intent);
+//        Bundle bundle = intent.getExtras();
+//        String bookTitle = bundle.getString("bookTitle");
+//        String bookOneSentence = bundle.getString("bookOneSentence");
 //        String bookContent = bundle.getString("bookContent");
-
-        //Restart를 할 경우 현재 키에 담겨있는 값들이 객체를 만듬
-        MainData mainData = new MainData(R.mipmap.ic_launcher, bookTitle, bookOneSentence);
-        arrayList.add(mainData);
-        mainAdapter.notifyDataSetChanged();
+//
+//        //Restart를 할 경우 현재 키에 담겨있는 값들이 객체를 만듬
+//        MainData mainData = new MainData(R.mipmap.ic_launcher, bookTitle, bookOneSentence);
+//        arrayList.add(mainData);
+//        mainAdapter.notifyDataSetChanged();
     }
 
 
