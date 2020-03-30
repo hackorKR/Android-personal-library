@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText_password = findViewById(R.id.TextInputEditText_password);
         LinearLayout_login = findViewById(R.id.LinearLayout_login);
 
-        //1. 값을 가져온다.- 검사(hackorkr@gmail.com / 1234)
+        //1. 값을 가져온다.- 검사(1234r@gmail.com / 1234)
         //2. 클릭을 감지한다. -
         //3. 1번의 값을 다음 액티비티로 넘긴다.
 

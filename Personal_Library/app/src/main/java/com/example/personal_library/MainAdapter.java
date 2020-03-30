@@ -1,9 +1,13 @@
 package com.example.personal_library;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,9 +22,26 @@ import java.util.ArrayList;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHolder> {
 
     private ArrayList<MainData> arrayList;
+    private Context mContext;
 
     public MainAdapter(ArrayList<MainData> arrayList) {
         this.arrayList = arrayList;
+    }
+
+    //1. 컨텍스트 메뉴를 사용하려면 RecyclerView.ViewHolder를 상속받은 클래스에서
+    //OnCreateContextMenuListener 리스터를 구현해야 한다.
+    public class CustomViewHolder extends RecyclerView.ViewHolder{
+
+        protected ImageView ImageVIew_profile;
+        protected TextView TextView_title;
+        protected TextView TextView_content;
+
+        public CustomViewHolder(@NonNull View itemView) {
+            super(itemView);
+            this.ImageVIew_profile = (ImageView) itemView.findViewById(R.id.ImageView_profile);
+            this.TextView_title = (TextView) itemView.findViewById(R.id.TextView_title);
+            this.TextView_content = (TextView) itemView.findViewById(R.id.TextView_content);
+        }
     }
 
     @NonNull
@@ -44,7 +65,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
             @Override
             public void onClick(View v) {
                 String curName =holder.TextView_title.getText().toString();
-                Toast.makeText(v.getContext(), curName, Toast.LENGTH_SHORT).show();
+                String oneSentence = holder.TextView_content.getText().toString();
+                Toast.makeText(v.getContext(), curName + "\n" + oneSentence, Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -56,7 +79,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
                return true;
            }
        });
-
     }
 
     @Override
@@ -74,18 +96,5 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.CustomViewHold
         }
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        protected ImageView ImageVIew_profile;
-        protected TextView TextView_title;
-        protected TextView TextView_content;
-
-        public CustomViewHolder(@NonNull View itemView) {
-            super(itemView);
-            this.ImageVIew_profile = (ImageView) itemView.findViewById(R.id.ImageView_profile);
-            this.TextView_title = (TextView) itemView.findViewById(R.id.TextView_title);
-            this.TextView_content = (TextView) itemView.findViewById(R.id.TextView_content);
-
-        }
-    }
 }

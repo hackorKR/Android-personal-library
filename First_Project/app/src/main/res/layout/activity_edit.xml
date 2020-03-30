@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#81DAF5"
+        >
+        <ImageView
+            android:id="@+id/edit_exit"
+            android:layout_marginLeft="6dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@null"
+            android:src="@drawable/ic_exit"
+            android:clickable="true"
+            />
+
+        <ImageView
+            android:id="@+id/edit_attachment"
+            android:layout_marginRight="6dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@null"
+            android:src="@drawable/ic_attachment"
+            android:clickable="true"
+            />
+
+        <ImageView
+            android:id="@+id/edit_save"
+            android:layout_marginRight="6dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintRight_toLeftOf="@+id/edit_attachment"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@null"
+            android:src="@drawable/ic_save"
+            android:clickable="true"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/edit_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="제목">
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/edit_sentence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="한줄평"
+            android:ems="10">
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/edit_content"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:ems="10"
+            android:hint="내용"
+            android:gravity="top"
+            >
+
+        </EditText>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:text="이미지"
+            android:textSize="18sp"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:contextClickable="true"
+            android:background="@null"
+            >
+        </ImageView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_centerInParent="true"
+            android:background="#50808080"/>
+
+    </LinearLayout>
+</LinearLayout>

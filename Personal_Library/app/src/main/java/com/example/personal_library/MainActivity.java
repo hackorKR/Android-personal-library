@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             MainData mainData = new MainData(R.mipmap.ic_launcher, title, oneSentence);
             arrayList.add(mainData);
             mainAdapter.notifyDataSetChanged();
-            Log.d("만들어짐?", "어?");
+            Log.d("존재유무: ", "만들어짐");
         }
 //        String bookTitle = sharedPreferences.getString("bookTitle", "");
 //        String bookOneSentence = sharedPreferences.getString("bookOneSentence", "");
