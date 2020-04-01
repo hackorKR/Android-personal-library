@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Created by Administrator on 2017-08-07.
  */
 
-public class Edit_Dialog {
+public class Edit_Dialog{
 
     private Context context;
 

@@ -6,14 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
         <!--No Title Bar-->
 <!--        <item name="windowActionBar">false</item>-->
 <!--        <item name="windowNoTitle">true</item>-->
-    </style>
-
-    <style name="LoadingPage" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">@drawable/src_loading02</item>
     </style>
 
     <style name="actionTheme" parent="AppTheme">

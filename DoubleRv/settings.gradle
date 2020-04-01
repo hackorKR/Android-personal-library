@@ -1,0 +1,2 @@
+rootProject.name='DoubleRv'
+include ':app'
