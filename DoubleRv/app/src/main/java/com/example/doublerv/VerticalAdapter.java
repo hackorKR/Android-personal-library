@@ -2,6 +2,7 @@ package com.example.doublerv;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,11 +98,21 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
 
     public void itemAdd(int position){
         ArrayList<Movie> movieList = new ArrayList();
+        ArrayList<Movie> movieList2 = new ArrayList();
         try{
-            movieList.add(new Movie(R.drawable.movie1, "알라딘", "예시로 하나 넣는거다1"));
-            AllMovieList.set(position, movieList);
+//            movieList.add(new Movie(R.drawable.movie1, "알라딘", "예시로 하나 넣는거다1"));
 //            Toast.makeText(context, "추가버튼 누름",Toast.LENGTH_SHORT).show();
             Toast.makeText(context, AllMovieList.get(position).toString(),Toast.LENGTH_LONG).show();
+
+            for(int i =0; i < AllMovieList.get(position).size(); i++){
+                movieList2.add(AllMovieList.get(position).get(i));
+                Log.d("key", "영화리스트 늘어나는부분");
+            }
+
+            movieList.add(new Movie(R.drawable.book_homo, "호모데우스", "신이 되는 인간의 미래를 상상해본다"));
+            movieList2.addAll(movieList);
+
+            AllMovieList.set(position, movieList2);
 //            AllMovieList.set(position, movieList2);
 
         } catch(IndexOutOfBoundsException ex){
