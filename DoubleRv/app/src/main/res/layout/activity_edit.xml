@@ -53,23 +53,23 @@
 
                 </EditText>
 
-                <EditText
-                    android:id="@+id/edit_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:ems="10"
-                    android:hint="내용"
-                    android:gravity="top"
-                    >
+<!--                <EditText-->
+<!--                    android:id="@+id/edit_content"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:ems="10"-->
+<!--                    android:hint="내용"-->
+<!--                    android:gravity="top"-->
+<!--                    >-->
 
-                </EditText>
+<!--                </EditText>-->
                 //수정버튼기능
-                <Button
-                    android:id="@+id/edit_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:text="수정"/>
+<!--                <Button-->
+<!--                    android:id="@+id/edit_edit"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="right"-->
+<!--                    android:text="수정"/>-->
 
             </LinearLayout>
             </LinearLayout>

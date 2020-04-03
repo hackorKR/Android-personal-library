@@ -12,8 +12,8 @@
     </style>
 
     <style name="actionTheme" parent="AppTheme">
-        <item name="tint">@color/colorBlack</item>
-        <item name="actionMenuTextColor">@color/colorBlack</item>
+        <item name="tint">@color/colorWhite</item>
+        <item name="actionMenuTextColor">@color/colorWhite</item>
     </style>
 
 </resources>

@@ -86,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<Movie> movieList3 = new ArrayList();
 
-        movieList3.add(new Movie(R.drawable.book_demian, "데미안", "피폐한 삶을 사는 사람에게 끊임없이 각성을 요구한다"));
-        movieList3.add(new Movie(R.drawable.book_sitarta, "싯다르타", "깨달음은 가르침을 통해 전해질 수 없다."));
-        movieList3.add(new Movie(R.drawable.book_oldman, "노인과 바다", "끊임없이 죽음과 대결하며 인간의 존엄성에 대해 다시 탐구해본다."));
+        movieList3.add(new Movie(R.drawable.book_titan, "타이탄의 도구들", "상위 20퍼 재주 여러개가 상위 1퍼 재주 하나보다 낫다."));
+        movieList3.add(new Movie(R.drawable.book_perfect, "완벽한 공부법", "완벽하게 공부하는 방법은 없다"));
+        movieList3.add(new Movie(R.drawable.book_sayno, "세이노의 가르침", "인생이 마음에 들지 않는다면 분노해야할 대상은 세상이 아니라 너 자신이다."));
 
         allMovieList.add(movieList3);
     }
