@@ -110,9 +110,9 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
             }
 
             movieList.add(new Movie(R.drawable.book_homo, "호모데우스", "신이 되는 인간의 미래를 상상해본다"));
-            movieList2.addAll(movieList);
+            movieList.addAll(movieList2);
 
-            AllMovieList.set(position, movieList2);
+            AllMovieList.set(position, movieList);
 //            AllMovieList.set(position, movieList2);
 
         } catch(IndexOutOfBoundsException ex){
