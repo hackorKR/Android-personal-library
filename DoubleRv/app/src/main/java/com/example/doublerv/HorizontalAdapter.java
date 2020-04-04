@@ -62,9 +62,9 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(v.getContext(), EditActivity.class);
+                intent.putExtra("poster", dataList.get(position).getResourceID());
                 intent.putExtra("title", dataList.get(position).getTitle());
                 intent.putExtra("sentence", dataList.get(position).getSentence());
-                intent.putExtra("poster", dataList.get(position).getResourceID());
                 mContext.startActivity(intent);
             }
         });

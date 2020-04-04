@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
@@ -22,6 +23,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     private static final int REQ_CODE_SELECT_IMAGE = 1;
 
@@ -96,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu,menu);
+        inflater.inflate(R.menu.menu, menu);
 
         MenuItem.OnActionExpandListener onActionExpandListener = new MenuItem.OnActionExpandListener() {
             @Override
@@ -113,9 +117,10 @@ public class MainActivity extends AppCompatActivity {
         };
         menu.findItem(R.id.item_search).setOnActionExpandListener(onActionExpandListener);
         SearchView searchView = (SearchView)menu.findItem(R.id.item_search).getActionView();
-        searchView.setQueryHint("Search Data here...");
+        searchView.setQueryHint("책 제목을 입력해주세요.");
         return true;
     }
+
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
         switch (item.getItemId()){
             case R.id.item_gallery:

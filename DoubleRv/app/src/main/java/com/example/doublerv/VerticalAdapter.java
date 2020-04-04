@@ -21,11 +21,11 @@ import java.util.Collections;
 public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.VerticalViewHolder>{
 
     private ArrayList<ArrayList<Movie>> AllMovieList;
-    private Context context;
+    private Context mContext;
 
     public VerticalAdapter(Context context, ArrayList<ArrayList<Movie>> data)
     {
-        this.context = context;
+        this.mContext = context;
         this.AllMovieList = data;
 
     }
@@ -55,12 +55,12 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final VerticalAdapter.VerticalViewHolder verticalViewHolder, int position) {
-        HorizontalAdapter adapter = new HorizontalAdapter(context, AllMovieList.get(position));
+    public void onBindViewHolder(@NonNull final VerticalAdapter.VerticalViewHolder verticalViewHolder, final int position) {
+        HorizontalAdapter adapter = new HorizontalAdapter(mContext, AllMovieList.get(position));
 
 //        verticalViewHolder.shelf.setText(shelfArrayList.get(position).getShelf());
         verticalViewHolder.recyclerView.setHasFixedSize(true);
-        verticalViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false));
+        verticalViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL,false));
         verticalViewHolder.recyclerView.setAdapter(adapter);
 
 
@@ -77,6 +77,20 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
             }
         });
 
+        //책장뷰를 한번 클릭했을때 선반페이지 + 정보전달
+        verticalViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(v.getContext(), ShelfviewActivity.class);
+                for(int i = 0; i < AllMovieList.get(position).size(); i++){
+
+                }
+                mContext.startActivity(intent);
+            }
+        });
+
+        //책장뷰를 길게 눌렀을때 다른 책장과의 스와이프가 가능하도록 만들기
         verticalViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -102,7 +116,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
         try{
 //            movieList.add(new Movie(R.drawable.movie1, "알라딘", "예시로 하나 넣는거다1"));
 //            Toast.makeText(context, "추가버튼 누름",Toast.LENGTH_SHORT).show();
-            Toast.makeText(context, AllMovieList.get(position).toString(),Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, AllMovieList.get(position).toString(),Toast.LENGTH_LONG).show();
 
             for(int i =0; i < AllMovieList.get(position).size(); i++){
                 movieList2.add(AllMovieList.get(position).get(i));
