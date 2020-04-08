@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
@@ -17,16 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/toolbar" />
-        <Button
-            android:id="@+id/main_shelfadd"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="책장추가"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewVertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:scrollbarStyle="outsideOverlay"/>
 
 
 <!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
@@ -38,9 +35,51 @@
 <!--            android:layout_gravity="end|bottom"-->
 <!--            android:src="@drawable/ic_add_circle"-->
 <!--            app:backgroundTint="@color/colorWhite"/>-->
-
-
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_sub1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/fab_sub2"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="20dp"
+            android:backgroundTint="#0040FF"
+            android:src="@drawable/ic_shelf_add_white"
+            android:visibility="invisible"
+            app:borderWidth="0dp"
+            app:fabSize="normal"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_sub2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/fab_main"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="20dp"
+            android:backgroundTint="#0040FF"
+            android:src="@drawable/ic_book_add_white"
+            android:visibility="invisible"
+            app:borderWidth="0dp"
+            app:fabSize="normal" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="20dp"
+            android:backgroundTint="#0040FF"
+            android:src="@drawable/ic_add_circle_white"
+            app:borderWidth="0dp"
+            app:fabSize="normal" />
     </LinearLayout>
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

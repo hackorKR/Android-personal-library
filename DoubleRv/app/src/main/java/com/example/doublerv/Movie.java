@@ -1,28 +1,35 @@
 package com.example.doublerv;
 
+import android.graphics.Bitmap;
+
 public class Movie {
     private String title;
     private String sentence;
+    private Bitmap bitmap;
 
-    private int ResourceID;
 
-    public Movie(int id, String title, String sentence)
-    {
-        this.ResourceID = id;
+    public Movie(Bitmap bitmap, String title, String sentence){
+        this.bitmap = bitmap;
         this.title = title;
         this.sentence = sentence;
     }
+
 
     public String getTitle() {
         return title;
     }
 
-    public int getResourceID() {
-        return ResourceID;
-    }
 
     public String getSentence() {
         return sentence;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
 }

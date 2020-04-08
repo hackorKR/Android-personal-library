@@ -23,7 +23,7 @@
                 android:padding="16dp">
 
             <ImageView
-                android:id="@+id/edit_poster"
+                android:id="@+id/bookview_poster"
                 android:layout_width="240dp"
                 android:layout_height="320dp"
                 android:layout_gravity="center_horizontal"
@@ -36,7 +36,7 @@
                 android:padding="10dp">
 
                 <EditText
-                    android:id="@+id/edit_title"
+                    android:id="@+id/bookview_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -45,7 +45,7 @@
                 </EditText>
 
                 <EditText
-                    android:id="@+id/edit_sentence"
+                    android:id="@+id/bookview_sentence"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="한줄평"
@@ -53,23 +53,15 @@
 
                 </EditText>
 
-                <EditText
-                    android:id="@+id/edit_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:ems="10"
-                    android:hint="내용"
-                    android:gravity="top"
-                    >
-
-                </EditText>
-                //수정버튼기능
-                <Button
-                    android:id="@+id/edit_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:text="수정"/>
+<!--                <EditText-->
+<!--                    android:id="@+id/bookview_content"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="250dp"-->
+<!--                    android:ems="10"-->
+<!--                    android:hint="내용"-->
+<!--                    android:gravity="top"-->
+<!--                    >-->
+<!--                </EditText>-->
 
             </LinearLayout>
             </LinearLayout>
