@@ -55,10 +55,12 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
+
                     intent.putExtra("poster", byteArray);
 
                     intent.putExtra("title", dataList.get(position).getTitle());
                     intent.putExtra("sentence", dataList.get(position).getSentence());
+                    intent.putExtra("book_position", position);
 
                     mContext.startActivity(intent);
                 }

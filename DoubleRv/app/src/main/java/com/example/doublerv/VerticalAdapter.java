@@ -90,7 +90,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(v.getContext(), ShelfViewActivity.class);
+                Intent intent = new Intent(v.getContext(), ShelfviewActivity.class);
 //                for(int i = 0; i < AllMovieList.get(position).size(); i++){
 //                }
                 mContext.startActivity(intent);

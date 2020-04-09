@@ -27,6 +27,7 @@ public class BookViewActivity extends AppCompatActivity {
     protected EditText title, sentence;
     private Toolbar toolbar;
     protected Button edit_edit;
+    private int book_position;
 
     private static final int EDIT_CODE = 100;
 
@@ -54,6 +55,7 @@ public class BookViewActivity extends AppCompatActivity {
 
         title.setText(bundle.getString("title"));
         sentence.setText(bundle.getString("sentence"));
+        this.book_position = bundle.getInt("book_position");
 
         //바이트어레이를 받아와서 비트맵으로 바꾸고 이미지뷰에 띄우기
         byte[] arr = intent.getByteArrayExtra("poster");
@@ -77,6 +79,7 @@ public class BookViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
+
                 finish();
                 return true;
             }
@@ -91,6 +94,7 @@ public class BookViewActivity extends AppCompatActivity {
                 intent.putExtra("book_title", title.getText().toString());
                 intent.putExtra("book_sentence", sentence.getText().toString());
                 intent.putExtra("book_poster", byteArray);
+                intent.putExtra("book_position", book_position);
 
                 startActivityForResult(intent, EDIT_CODE);
                 break;
@@ -120,6 +124,7 @@ public class BookViewActivity extends AppCompatActivity {
                 byte[] arr = data.getByteArrayExtra("book_poster");
                 Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
                 poster.setImageBitmap(bitmap);
+
                 break;
         }
     }

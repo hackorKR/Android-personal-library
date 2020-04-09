@@ -147,18 +147,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String book_title = bookData.getString("book_title", "");
         String book_sentence = bookData.getString("book_sentence", "");
         String stringByteArray = bookData.getString("book_poster", null);
-
+        Log.d("onCreate에서 일어남", stringByteArray);
         byte[] arr = null;
 
         if(stringByteArray != null){
-            byte[] array = stringByteArray.getBytes();
-//            String[] split = stringByteArray.substring(1, stringByteArray.length()-1).split(",");
-//            byte[] byteArray = new byte[split.length];
-//            for(int i = 0; i <split.length; i++){
-//                byteArray[i] = Byte.parseByte(split[i]);
-//            }
 
-            arr = array;
+            byte[] array = stringByteArray.getBytes();
+            Log.e("onCreate에서 일어남", array.toString());
+
+            String[] stringByteArrays = stringByteArray.substring(1, stringByteArray.length()-1).replace(" ", "").split(",");
+            byte[] byteArray = new byte[stringByteArrays.length];
+            for(int i = 0; i <stringByteArrays.length; i++){
+                byteArray[i] = Byte.parseByte(stringByteArrays[i]);
+            }
+
+            arr = byteArray;
         }
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 

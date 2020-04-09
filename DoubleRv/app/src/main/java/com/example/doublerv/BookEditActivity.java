@@ -36,6 +36,7 @@ public class BookEditActivity extends AppCompatActivity {
     private Button save;
     private final int GET_GALLERY_IMAGE =200;
     private int shelf_position = 0;
+    private int book_position = 0;
     private String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
 
@@ -72,6 +73,7 @@ public class BookEditActivity extends AppCompatActivity {
 
         title.setText(bundle.getString("book_title"));
         sentence.setText(bundle.getString("book_sentence"));
+        this.book_position = (bundle.getInt("book_position"));
 
         //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
         byte[] arr = intent.getByteArrayExtra("book_poster");
@@ -94,7 +96,7 @@ public class BookEditActivity extends AppCompatActivity {
                 intent.putExtra("book_title", title.getText().toString());
                 intent.putExtra("book_sentence", sentence.getText().toString());
                 intent.putExtra("book_poster", byteArray);
-                intent.putExtra("shelf_position", shelf_position);
+                intent.putExtra("book_position", book_position);
                 setResult(RESULT_OK, intent);
                 finish();
             }

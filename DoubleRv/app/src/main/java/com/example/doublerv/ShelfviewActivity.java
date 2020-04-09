@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ShelfViewActivity extends AppCompatActivity {
+public class ShelfviewActivity extends AppCompatActivity {
 
     private ArrayList<Movie> movieList = new ArrayList();
     protected ImageView poster;
