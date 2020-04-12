@@ -1,4 +1,4 @@
-package com.example.doublerv;
+package com.example.doublerv.Activity;
 
 import androidx.annotation.NonNull;
 
@@ -8,17 +8,14 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,14 +28,14 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.doublerv.Adapter.VerticalAdapter;
+import com.example.doublerv.Function.ItemTouchHelperCallBack;
+import com.example.doublerv.ClassData.Book;
+import com.example.doublerv.R;
+import com.example.doublerv.ClassData.Shelf;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,23 +45,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int BOOK_ADD = 100;
     private static final int REQ_CODE_SELECT_IMAGE = 1;
 
+    //Adapter
     //verticalAdapter에 넣을 변수
-    private ArrayList<ArrayList<Movie>> allMovieList = new ArrayList();
-    private Shelf shelf = new Shelf("책장");
+    private ArrayList<ArrayList<Book>> allMovieList = new ArrayList();
 
+    private ArrayList<Shelf> allShelfList = new ArrayList<>();
+
+    private Shelf shelf = new Shelf("책장");
+    //어댑터를 여기에 선언해야 notifyData를 다른데에서도 쓸 수 있다.
+    private VerticalAdapter verticalAdapter;
+
+    //Function
     //책장옮기는 아이템터치헬퍼
     ItemTouchHelper helper;
 
+    //Activity
     //Floating 버튼 변수 선언
     private FloatingActionButton fab_main, fab_sub1, fab_sub2;
     private Animation fab_open, fab_close;
     private boolean isFabOpen = false;
 
-    //어댑터를 여기에 선언해야 notifyData를 다른데에서도 쓸 수 있다.
-    private VerticalAdapter verticalAdapter;
-
+    //shelf_position를 전역변수를 받음
+    //전역변수야 하는 이유는 내가 선택한 책장의 번호가 다른 메서드에도 전달되고 사용되어야 하기 때문이다.
     private int shelf_position;
 
+    //onCreate에는 앱 실행시 가져와야할 데이터와 표시될 설정들을 띄운다.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //수직 리사이클러뷰에 어댑터 붙이기
         RecyclerView view = findViewById(R.id.recyclerViewVertical);
-        verticalAdapter = new VerticalAdapter(this, allMovieList);
+        verticalAdapter = new VerticalAdapter(this, allMovieList, allShelfList);
         view.setHasFixedSize(true);
         view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         view.setAdapter(verticalAdapter);
@@ -112,16 +117,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int shelfCount = pref.getInt("shelf_count", 0);
         int size = pref.getInt("book_count_size", 0);
 
-        //만약에 어레이리스트로 받을 경우
-//        ArrayList<Integer> bookCount = new ArrayList<>();
-//        for(int k = 0; k < size; k++){
-//            bookCount.add(pref.getInt("book_count"+k, 0));
-//        }
+
+        //저장된 책장 별 책들의 숫자를 센 후 bookCount배열에 저장하기
         int[] bookCount = new int[size];
         for(int k = 0; k < size; k++){
             bookCount[k] = pref.getInt("book_count"+k, 0);
         }
 
+        //저장된 책장, 책 불러오기
         for(int i=0; i < shelfCount; i++){
             getSettingShelfData(i);
             Log.d("onCreate에서 일어나는 일", "책장 불러옴");
@@ -132,18 +135,101 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
-    //저장되어있는 bookData 정보를 가져오는 코드
-
-    private void getSettingShelfData(int shelf_position){
-        SharedPreferences shelfData = getSharedPreferences("shelfData"+shelf_position, MODE_PRIVATE);
-        String shelf_title = shelfData.getString("shelf_title", "");
-        ArrayList<Movie> movieList = new ArrayList<>();
-        allMovieList.add(movieList);
+    //생명주기 토스트 찍기
+    public void onStart() {
+        super.onStart();
+        Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
+    }
+    public void onResume() {
+        super.onResume();
+        Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
     }
 
+    public void onPause() {
+        super.onPause();
+        Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
+
+        //책장과 책을 SharedPreference에 저장하는 코드
+        for(int i = 0; i < allMovieList.size(); i++){
+            setSettingShelfData(i);
+            Log.d("onStop에서 일어나는 일", "책장 저장");
+            for(int j = 0; j < allMovieList.get(i).size(); j++){
+                setSettingBookData(i, j);
+                Log.d("onStop에서 일어나는 일", "책 저장");
+            }
+            verticalAdapter.notifyDataSetChanged();
+        }
+
+        int[] book_count = new int[allMovieList.size()];
+        for(int i = 0; i< allMovieList.size(); i++){
+            book_count[i] = allMovieList.get(i).size();
+        }
+
+        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        //shelf_count 저장
+        editor.putInt("shelf_count", allMovieList.size());
+
+        //book_count 번호를 붙여서 저장
+        for(int i = 0; i < book_count.length; i++){
+            editor.putInt("book_count"+i, book_count[i]);
+        }
+
+        //book_count_size 저장
+        editor.putInt("book_count_size", book_count.length);
+
+        editor.commit();
+    }
+    //데이터가 저장되는 순간
+    public void onStop() {
+        super.onStop();
+        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
+
+//        //책장과 책을 SharedPreference에 저장하는 코드
+//        for(int i = 0; i < allMovieList.size(); i++){
+//            setSettingShelfData(i);
+//            Log.d("onStop에서 일어나는 일", "책장 저장");
+//            for(int j = 0; j < allMovieList.get(i).size(); j++){
+//                setSettingBookData(i, j);
+//                Log.d("onStop에서 일어나는 일", "책 저장");
+//            }
+//            verticalAdapter.notifyDataSetChanged();
+//        }
+//
+//        int[] book_count = new int[allMovieList.size()];
+//        for(int i = 0; i< allMovieList.size(); i++){
+//            book_count[i] = allMovieList.get(i).size();
+//        }
+//
+//        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = preferences.edit();
+//
+//        //shelf_count 저장
+//        editor.putInt("shelf_count", allMovieList.size());
+//
+//        //book_count 번호를 붙여서 저장
+//        for(int i = 0; i < book_count.length; i++){
+//            editor.putInt("book_count"+i, book_count[i]);
+//        }
+//
+//        //book_count_size 저장
+//        editor.putInt("book_count_size", book_count.length);
+//
+//        editor.commit();
+    }
+
+    //저장되어있는 ShelfData 정보를 가져오는 코드
+    private void getSettingShelfData(int shelf_position){
+        SharedPreferences shelfData = getSharedPreferences("shelfData" + shelf_position, MODE_PRIVATE);
+        String shelf_title = shelfData.getString("shelf_title", "");
+        ArrayList<Book> bookList = new ArrayList<>();
+        allMovieList.add(bookList);
+    }
+
+    //저장되어있는 BookData 정보를 가져오는 코드
     private void getSettingBookData(int shelf_position, int book_position){
-        SharedPreferences bookData = getSharedPreferences("bookData"+shelf_position+book_position, MODE_PRIVATE);
+        SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
         String book_title = bookData.getString("book_title", "");
         String book_sentence = bookData.getString("book_sentence", "");
         String stringByteArray = bookData.getString("book_poster", null);
@@ -165,57 +251,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
-        allMovieList.get(shelf_position).add(book_position, new Movie(bitmap, book_title, book_sentence));
+        allMovieList.get(shelf_position).add(book_position, new Book(bitmap, book_title, book_sentence));
     }
 
 
-    public void onStop() {
-        super.onStop();
-        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
-
-        for(int i = 0; i < allMovieList.size(); i++){
-            setSettingShelfData(i);
-            Log.d("onStop에서 일어나는 일", "책장 저장");
-            for(int j = 0; j < allMovieList.get(i).size(); j++){
-                setSettingBookData(i, j);
-                Log.d("onStop에서 일어나는 일", "책 저장");
-            }
-            verticalAdapter.notifyDataSetChanged();
-        }
-
-        int[] book_count = new int[allMovieList.size()];
-        for(int i = 0; i< allMovieList.size(); i++){
-            book_count[i] = allMovieList.get(i).size();
-        }
-
-        int shelf_count = allMovieList.size();
-
-        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("shelf_count", shelf_count);
-
-        //만약에 어레이리스트로 넣을 경우
-//        for(int i = 0; i < book_count.size(); i++){
-//            editor.putInt("book_count"+i, book_count.get(i));
-//        }
-//        editor.putInt("book_count_size", book_count.size());
-
-        for(int i = 0; i < book_count.length; i++){
-            editor.putInt("book_count"+i, book_count[i]);
-        }
-        editor.putInt("book_count_size", book_count.length);
-
-        editor.commit();
-    }
-
-
+    //책장의 데이터를 SharedPreference에 저장
     private void setSettingShelfData(int shelf_position) {
-        SharedPreferences shelfData = getSharedPreferences("shelfData"+shelf_position,MODE_PRIVATE);
+        SharedPreferences shelfData = getSharedPreferences("shelfData"+shelf_position, MODE_PRIVATE);
         SharedPreferences.Editor editor = shelfData.edit();
-        editor.putString("shelf_title", "책장");
+        editor.putString("shelf_title", "책장5");
         editor.commit();
     }
 
+    //책의 데이터를 SharedPreference에 저장
     private void setSettingBookData(int shelf_position, int book_position) {
         SharedPreferences bookData = getSharedPreferences("bookData"+shelf_position+book_position, MODE_PRIVATE);
         SharedPreferences.Editor editor = bookData.edit();
@@ -233,47 +281,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.commit();
     }
 
-
-    public void onStart() {
-        super.onStart();
-        Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
-    }
-    public void onResume() {
-        super.onResume();
-        Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
-    }
-
-
-
-
-
-    public void initializeData()
-    {
-        ArrayList<Movie> movieList1 = new ArrayList();
-
-        Bitmap book_titan = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_dna);
-        Bitmap book_perfect = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_perfect);
-        Bitmap book_sayno = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_dna);
-
-        movieList1.add(new Movie(book_titan, "타이탄의 도구들", "상위 20퍼 재주 여러개가 상위 1퍼 재주 하나보다 낫다."));
-        movieList1.add(new Movie(book_perfect, "완벽한 공부법", "완벽하게 공부하는 방법은 없다"));
-        movieList1.add(new Movie(book_sayno, "세이노의 가르침", "인생이 마음에 들지 않는다면 분노해야할 대상은 세상이 아니라 너 자신이다."));
-
-        allMovieList.add(movieList1);
-
-        ArrayList<Movie> movieList2 = new ArrayList();
-
-        Bitmap book_dna = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_dna);
-        Bitmap book_secret= BitmapFactory.decodeResource(this.getResources(), R.drawable.book_secret);
-        Bitmap book_sapiens = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_sapiens);
-
-        movieList2.add(new Movie(book_dna, "이기적 유전자", "사람의 행동과 의사결정은 결국에는 유전자의 영향을 받는다."));
-        movieList2.add(new Movie(book_secret, "비밀의 언어", "암호학의 역사와 발전을 통찰력있게"));
-        movieList2.add(new Movie(book_sapiens, "사피엔스", "인류의 변천사와 미래를 한눈에"));
-
-        allMovieList.add(movieList2);
-    }
-
+    //툴바의 메뉴 레이아웃을 가져오고 검색아이콘인 돋보기를 누르면 일어나는 이벤트 처리하는 곳
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -298,6 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    //툴바의 기능들을 클릭시 나타나는 이벤트
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
         switch (item.getItemId()){
             case R.id.item_gallery:
@@ -331,25 +340,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fab_main:
-                toggleFab();
-                break;
-            case R.id.fab_sub1:
-                toggleFab();
-                Toast.makeText(this, "책장 추가", Toast.LENGTH_SHORT).show();
-                alertShow();
-                break;
-            case R.id.fab_sub2:
-                toggleFab();
-                Toast.makeText(this, "책 추가", Toast.LENGTH_SHORT).show();
-                alertShow2();
-                break;
-        }
-    }
-
     //다이얼로그 책장추가 버튼 메서드
     public void alertShow(){
         View dialogView = getLayoutInflater().inflate(R.layout.alertdialog_shelfadd, null);
@@ -363,12 +353,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String value = shelfadd_title.getText().toString();
-//                shelf_title.setText(value);
+//                shelf_title.setText(value); 여기서 책장 이름을 변경
+
                 Toast.makeText(MainActivity.this, "확인 버튼 클릭됨" + value, Toast.LENGTH_SHORT).show();
 
                 //비어있는 무비리스트를 책장에 추가
-                ArrayList<Movie> movieList = new ArrayList();
-                allMovieList.add(movieList);
+                ArrayList<Book> bookList = new ArrayList();
+                allMovieList.add(bookList);
                 verticalAdapter.notifyDataSetChanged();
 
                 dialog.dismiss();
@@ -387,10 +378,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //책장에 책을 추가하는 메서드
+    //shelf_position의 값을 설정하는 메서드이다.
     public void alertShow2(){
         final List<String> ListItems = new ArrayList<>();
         for(int i= 0; i < allMovieList.size(); i++){
-            ListItems.add("책장" + (i+1));
+            ListItems.add("책장이라구요!" + (i+1));
         }
         final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -413,16 +405,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.show();
     }
 
-    //
+    //startActivityForResult 돌아온 정보를 처리하는 곳
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK)
             return;
         switch (requestCode){
+                //없앨 기능이기 때문에 툴바 오른쪽 메뉴를 제거하면 없애도됨
             case REQ_CODE_SELECT_IMAGE:
                 Toast.makeText(this, "갤러리에서 이미지 보기만 하는 인텐트", Toast.LENGTH_SHORT).show();
                 break;
+                //책을 추가하는 메서드에서 보낸 startActivityForResult 결과를 처리하는 곳
             case BOOK_ADD:
                 Toast.makeText(this, "책추가를 했을시 보이는 인텐트", Toast.LENGTH_SHORT).show();
 
@@ -434,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
                 //선택한 책장 맨 앞에 내가 입력한 책 정보를 추가
-                allMovieList.get(shelf_position).add(0, new Movie(bitmap, book_title, book_sentence));
+                allMovieList.get(shelf_position).add(0, new Book(bitmap, book_title, book_sentence));
 
                 //화면 새로고침
                 verticalAdapter.notifyDataSetChanged();
@@ -442,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //Floating버튼 사용
+    //Floating 버튼 사용
     private void toggleFab() {
         if (isFabOpen) {
             fab_main.setImageResource(R.drawable.ic_add_circle_white);
@@ -458,6 +452,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             fab_sub1.setClickable(true);
             fab_sub2.setClickable(true);
             isFabOpen = true;
+        }
+    }
+
+    //Floting 버튼 클릭 이벤트
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fab_main:
+                toggleFab();
+                break;
+            case R.id.fab_sub1:
+                toggleFab();
+                Toast.makeText(this, "책장 추가", Toast.LENGTH_SHORT).show();
+                alertShow();
+                break;
+            case R.id.fab_sub2:
+                toggleFab();
+                Toast.makeText(this, "책 추가", Toast.LENGTH_SHORT).show();
+                alertShow2();
+                break;
         }
     }
 }

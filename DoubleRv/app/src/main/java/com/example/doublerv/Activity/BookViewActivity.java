@@ -1,7 +1,6 @@
-package com.example.doublerv;
+package com.example.doublerv.Activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,6 +17,8 @@ import androidx.appcompat.widget.Toolbar;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.doublerv.R;
 
 import java.io.ByteArrayOutputStream;
 

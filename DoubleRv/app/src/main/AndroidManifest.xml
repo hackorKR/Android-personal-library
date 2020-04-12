@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,19 +18,19 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".BookViewActivity">
+        <activity android:name=".Activity.BookViewActivity">
 
 
         </activity>
-        <activity android:name=".ShelfViewActivity">
+        <activity android:name=".Activity.ShelfViewActivity">
 
         </activity>
-        <activity android:name=".BookNewActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".Activity.BookNewActivity"
+            android:parentActivityName=".Activity.MainActivity">
 
         </activity>
-        <activity android:name=".BookEditActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".Activity.BookEditActivity"
+            android:parentActivityName=".Activity.MainActivity">
 
         </activity>
         <provider

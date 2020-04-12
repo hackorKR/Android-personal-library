@@ -1,4 +1,4 @@
-package com.example.doublerv;
+package com.example.doublerv.Activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -22,6 +22,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+
+import com.example.doublerv.R;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

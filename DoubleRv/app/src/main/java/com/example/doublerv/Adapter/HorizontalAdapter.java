@@ -1,11 +1,10 @@
-package com.example.doublerv;
+package com.example.doublerv.Adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +16,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.doublerv.Activity.BookViewActivity;
+import com.example.doublerv.ClassData.Book;
+import com.example.doublerv.R;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.HorizontalViewHolder> {
 
-    private ArrayList<Movie> dataList;
+    private ArrayList<Book> dataList;
     private Context mContext;
 
-    public HorizontalAdapter(Context mContext, ArrayList<Movie> data)
+    public HorizontalAdapter(Context mContext, ArrayList<Book> data)
     {
         this.mContext =mContext;
         this.dataList = data;
@@ -80,7 +83,7 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
     @Override
     public void onBindViewHolder(final HorizontalViewHolder horizontalViewHolder, final int position)
     {
-        Movie m = dataList.get(position);
+        Book m = dataList.get(position);
         horizontalViewHolder.image.setImageBitmap(m.getBitmap());
         horizontalViewHolder.title.setText(dataList.get(position).getTitle());
         horizontalViewHolder.sentence.setText(dataList.get(position).getSentence());

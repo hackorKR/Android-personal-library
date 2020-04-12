@@ -18,6 +18,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"/>
+
         <Button
             android:id="@+id/shelfItem_add"
             android:layout_width="wrap_content"
@@ -25,7 +26,18 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="추가"/>
+            android:text="편집"/>
+
+        <TextView
+            android:id="@+id/shelf_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            app:layout_constraintRight_toLeftOf="@id/shelfItem_add"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="20sp"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

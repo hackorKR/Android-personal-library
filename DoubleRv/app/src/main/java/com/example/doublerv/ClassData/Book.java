@@ -1,14 +1,14 @@
-package com.example.doublerv;
+package com.example.doublerv.ClassData;
 
 import android.graphics.Bitmap;
 
-public class Movie {
+public class Book {
     private String title;
     private String sentence;
     private Bitmap bitmap;
 
 
-    public Movie(Bitmap bitmap, String title, String sentence){
+    public Book(Bitmap bitmap, String title, String sentence){
         this.bitmap = bitmap;
         this.title = title;
         this.sentence = sentence;
