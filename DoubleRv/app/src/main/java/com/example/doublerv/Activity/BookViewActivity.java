@@ -56,6 +56,7 @@ public class BookViewActivity extends AppCompatActivity {
 
         title.setText(bundle.getString("title"));
         sentence.setText(bundle.getString("sentence"));
+
         this.book_position = bundle.getInt("book_position");
 
         //바이트어레이를 받아와서 비트맵으로 바꾸고 이미지뷰에 띄우기

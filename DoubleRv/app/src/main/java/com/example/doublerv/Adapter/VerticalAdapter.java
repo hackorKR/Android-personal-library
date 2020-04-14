@@ -5,12 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,8 +52,9 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
     public class VerticalViewHolder extends RecyclerView.ViewHolder{
         protected RecyclerView recyclerView;
         protected TextView shelf_title;
-        protected Button shelfItem_add;
+//        protected Button shelfItem_add;
 
+        protected ImageView shelfItem_edit;
         protected TextView shelf_count;
 
         public VerticalViewHolder(@NonNull View view)
@@ -59,8 +62,9 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
             super(view);
             this.recyclerView = (RecyclerView)itemView.findViewById(R.id.recyclerView_horizontal);
             this.shelf_title = (TextView)itemView.findViewById(R.id.shelf_title);
-            this.shelfItem_add = (Button)itemView.findViewById(R.id.shelfItem_add);
+//            this.shelfItem_add = (Button)itemView.findViewById(R.id.shelfItem_add);
 
+            this.shelfItem_edit = (ImageView)itemView.findViewById(R.id.shelfItem_add);
             this.shelf_count = (TextView)itemView.findViewById(R.id.shelf_count);
         }
 
@@ -80,27 +84,19 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
         return new VerticalAdapter.VerticalViewHolder(v);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull final VerticalAdapter.VerticalViewHolder verticalViewHolder, final int position) {
-        HorizontalAdapter adapter = new HorizontalAdapter(mContext, AllBookList.get(position));
 
+        //HorizontalAdapter 를 가져와 여기 리사이클러뷰에 붙인다.
+        HorizontalAdapter adapter = new HorizontalAdapter(mContext, AllBookList.get(position));
         //ShelfList에서 가져오는 bookList
         //HorizontalAdapter asd = new HorizontalAdapter(mContext, ShelfList.get(position).bookList);
 
         verticalViewHolder.recyclerView.setHasFixedSize(true);
         verticalViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL,false));
         verticalViewHolder.recyclerView.setAdapter(adapter);
-
-        //책장안에 있는 추가를 누를때 일어나는 일
-//        verticalViewHolder.itemView.setTag(position);
-//        verticalViewHolder.shelfItem_add.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //아래 한줄을 키면 하드코딩 객체 생성 가능
-//                itemAdd(verticalViewHolder.getAdapterPosition());
-//                notifyDataSetChanged();
-//            }
-//        });
 
         //책장 안에 있는 번호를 누를 경우 일어나는 일
         verticalViewHolder.itemView.setTag(position);
@@ -112,37 +108,82 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
         });
 
         //편집을 누르면 책장 이름을 바꿀 수 있다.
-        verticalViewHolder.shelfItem_add.setOnClickListener(new View.OnClickListener() {
+        verticalViewHolder.shelfItem_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-                View dialogView = inflater.inflate(R.layout.alertdialog_shelfadd, null);
-                final EditText shelfadd_title = (EditText)dialogView.findViewById(R.id.shelfadd_title);
+                final List<String> ListItems = new ArrayList<>();
+                ListItems.add("책장 이름 편집");
+                ListItems.add("책장 삭제");
+                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setView(dialogView);
+                builder.setTitle("책장 설정");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int pos) {
+                        String selectedText = items[pos].toString();
+                        Toast.makeText(mContext, selectedText, Toast.LENGTH_SHORT).show();
+                        switch (pos){
+                            //편집을 누를시
+                            case 0:
+                                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                                View dialogView = inflater.inflate(R.layout.alertdialog_shelfadd, null);
+                                final EditText shelfadd_title = (EditText)dialogView.findViewById(R.id.shelfadd_title);
+                                TextView shelfadd_name = (TextView)dialogView.findViewById(R.id.shelfadd_name);
+                                shelfadd_name.setText("책장 이름 편집");
 
-                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String value = shelfadd_title.getText().toString();
-                        verticalViewHolder.shelf_title.setText(value);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                                builder.setView(dialogView);
 
-                        Toast.makeText(mContext, "확인 버튼 클릭됨" + value, Toast.LENGTH_SHORT).show();
+                                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String value = shelfadd_title.getText().toString();
+                                        verticalViewHolder.shelf_title.setText(value);
 
-                        dialog.dismiss();
+                                        Toast.makeText(mContext, "확인 버튼 클릭됨" + value, Toast.LENGTH_SHORT).show();
+
+                                        dialog.dismiss();
+                                    }
+                                });
+                                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(mContext, "취소 버튼 클릭됨", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                                break;
+
+                            //삭제버튼을 누를시
+                            case 1:
+                                AlertDialog.Builder builder2 = new AlertDialog.Builder(mContext);
+
+                                builder2.setTitle("삭제").setMessage("정말로 삭제하시겠습니까?");
+
+                                builder2.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id)
+                                    {
+                                        remove(verticalViewHolder.getAdapterPosition());
+                                    }
+                                });
+
+                                builder2.setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id)
+                                    {
+                                    }
+                                });
+                                AlertDialog alertDialog2 = builder2.create();
+                                alertDialog2.show();
+                                break;
+                        }
                     }
                 });
-                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(mContext, "취소 버튼 클릭됨", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+                builder.show();
             }
         });
 
@@ -153,39 +194,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ShelfViewActivity.class);
                 intent.putExtra("shelf_position", verticalViewHolder.getAdapterPosition());
-//                for(int i = 0; i < AllBookList.get(position).size(); i++){
-//                }
                 mContext.startActivity(intent);
-            }
-        });
-
-        //책장뷰를 길게 눌렀을때 다른 책장과의 스와이프가 가능하도록 만들기
-        verticalViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                final List<String> ListItems = new ArrayList<>();
-                ListItems.add("편집");
-                ListItems.add("삭제");
-                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle("책장 정보 바꾸기");
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int pos) {
-                        String selectedText = items[pos].toString();
-                        Toast.makeText(mContext, selectedText, Toast.LENGTH_SHORT).show();
-                        switch (pos){
-                            case 0:
-                                alertShow(verticalViewHolder.getAdapterPosition());
-                                break;
-                            case 1:
-                                remove(verticalViewHolder.getAdapterPosition());
-                                break;
-                        }
-                    }
-                });
-                builder.show();
-                return true;
             }
         });
     }

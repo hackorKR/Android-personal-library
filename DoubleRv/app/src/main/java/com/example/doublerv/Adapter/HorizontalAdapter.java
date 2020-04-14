@@ -60,7 +60,6 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
                     byte[] byteArray = stream.toByteArray();
 
                     intent.putExtra("poster", byteArray);
-
                     intent.putExtra("title", dataList.get(position).getTitle());
                     intent.putExtra("sentence", dataList.get(position).getSentence());
                     intent.putExtra("book_position", position);
@@ -93,24 +92,41 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
             public boolean onLongClick(View v) {
 //                remove(horizontalViewHolder.getAdapterPosition());
 //                notifyDataSetChanged();
-                final List<String> ListItems = new ArrayList<>();
-                ListItems.add("삭제");
-                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+//                final List<String> ListItems = new ArrayList<>();
+//                ListItems.add("삭제");
+//                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+//
+//                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+//                builder.setTitle("책 삭제");
+//                builder.setItems(items, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int pos) {
+//                        String selectedText = items[pos].toString();
+//                        Toast.makeText(mContext, selectedText, Toast.LENGTH_SHORT).show();
+//                        switch (pos){
+//                            case 0:
+                                AlertDialog.Builder builder2 = new AlertDialog.Builder(mContext);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle("책 삭제할까 말까");
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int pos) {
-                        String selectedText = items[pos].toString();
-                        Toast.makeText(mContext, selectedText, Toast.LENGTH_SHORT).show();
-                        switch (pos){
-                            case 0:
-                                remove(horizontalViewHolder.getAdapterPosition());
-                                break;
-                        }
-                    }
-                });
-                builder.show();
+                                builder2.setTitle("선택한 책 삭제").setMessage("정말로 삭제하시겠습니까?");
+
+                                builder2.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id)
+                                    {
+                                        remove(horizontalViewHolder.getAdapterPosition());
+                                    }
+                                });
+
+                                builder2.setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id)
+                                    {
+                                    }
+                                });
+                                AlertDialog alertDialog2 = builder2.create();
+                                alertDialog2.show();
+//                    }
+//                });
+//                builder.show();
                 return true;
             }
         });

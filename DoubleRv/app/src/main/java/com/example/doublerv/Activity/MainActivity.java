@@ -49,9 +49,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //verticalAdapter에 넣을 변수
     private ArrayList<ArrayList<Book>> allMovieList = new ArrayList();
 
-    private ArrayList<Shelf> allShelfList = new ArrayList<>();
+    private ArrayList<Shelf> allShelfList = new ArrayList();
 
     private Shelf shelf = new Shelf("책장");
+
     //어댑터를 여기에 선언해야 notifyData를 다른데에서도 쓸 수 있다.
     private VerticalAdapter verticalAdapter;
 
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //책의 데이터를 SharedPreference에 저장
     private void setSettingBookData(int shelf_position, int book_position) {
-        SharedPreferences bookData = getSharedPreferences("bookData"+shelf_position+book_position, MODE_PRIVATE);
+        SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
         SharedPreferences.Editor editor = bookData.edit();
 
         editor.putString("book_title", allMovieList.get(shelf_position).get(book_position).getTitle());
@@ -287,6 +288,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
 
+        //검색 버튼 클릭했을 때 searchview 길이 꽉파게 늘려주기
+        SearchView searchView = (SearchView)menu.findItem(R.id.item_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        //검색 버튼 클릭했을 때 searchableview에 힌트 추가
+        searchView.setQueryHint("책 제목을 입력해주세요.");
+        //검색 리스너 추가
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            //검색어 입력시 이벤트 제어
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(getApplicationContext(), "검색을 완료했습니다.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("searchview에 글 작성시", "입력중입니다.");
+                return false;
+            }
+        });
+
         MenuItem.OnActionExpandListener onActionExpandListener = new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -299,25 +321,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(MainActivity.this, "Search is Collapse", Toast.LENGTH_SHORT).show();
                 return true;
             }
+
+
         };
         menu.findItem(R.id.item_search).setOnActionExpandListener(onActionExpandListener);
-        SearchView searchView = (SearchView)menu.findItem(R.id.item_search).getActionView();
-        searchView.setQueryHint("책 제목을 입력해주세요.");
+
+        searchView.setIconifiedByDefault(true);
         return true;
+        //setQueryHint(CharSequence) --> 쿼리 필드가 비어있을 때 나타나는 문장 설정
+        //setOnQueryTextListener(SearchView.OnQueryTextListener listener) --> 쿼리 변경시 사용자 액션의 listener 설정
+        //setSearchableInfo(SearchableInfo searchable) --> SearchableInfo 설정
+        //setIconifiedByDefault(boolean iconified) --> 검책창의 기본 상태 설정
+        //true: 필드가 보임, false: 아이콘이 보임
     }
 
     //툴바의 기능들을 클릭시 나타나는 이벤트
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
         switch (item.getItemId()){
-            case R.id.item_gallery:
-                Toast.makeText(this, "Gallery is pressed", Toast.LENGTH_SHORT).show();
-                //갤러리로 가는 인텐트
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-                intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
-
-                break;
             case R.id.item_share:
                 Toast.makeText(this, "share is pressed", Toast.LENGTH_SHORT).show();
                 //공유할 수 있는 프로그램을 여는 인텐트
@@ -327,14 +347,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent2.putExtra(Intent.EXTRA_TEXT, text);
                 Intent chooser = Intent.createChooser(intent2, "친구에게 공유하기");
                 startActivity(chooser);
-
-                break;
-            case R.id.item_setting:
-                Toast.makeText(this, "Setting is pressed", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.item_Newpage:
-                Toast.makeText(this, "Newpage is pressed", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), BookViewActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
