@@ -43,8 +43,13 @@ public class ShelfViewActivity extends AppCompatActivity {
         ActionBar actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        //Intent 받아오기 verticalAdapter에서 보내는 shelf의 포지션
+        Intent intent = getIntent();
+        int shelf_position = intent.getIntExtra("shelf_position", 0);
+        String shelf_title = intent.getStringExtra("shelf_title");
+
         //툴바 title
-        actionBar.setTitle("책장 페이지");
+        actionBar.setTitle(shelf_title);
 
         //하드코딩 부분
         //this.initializeData();
@@ -55,10 +60,6 @@ public class ShelfViewActivity extends AppCompatActivity {
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new GridLayoutManager(this,3));
         rv.setAdapter(horizontalAdapter);
-
-        //Intent 받아오기 verticalAdapter에서 보내는 shelf의 포지션
-        Intent intent = getIntent();
-        int shelf_position = intent.getIntExtra("shelf_position", 0);
 
         SharedPreferences pref = getSharedPreferences("count", MODE_PRIVATE);
         int size = pref.getInt("book_count_size", 0);

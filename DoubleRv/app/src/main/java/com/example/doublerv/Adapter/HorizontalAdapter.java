@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.doublerv.Activity.BookViewActivity;
 import com.example.doublerv.ClassData.Book;
+//import com.example.doublerv.Classbook.Book;
 import com.example.doublerv.R;
 
 import java.io.ByteArrayOutputStream;
@@ -26,13 +27,13 @@ import java.util.List;
 
 public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.HorizontalViewHolder> {
 
-    private ArrayList<Book> dataList;
+    private ArrayList<Book> bookList;
     private Context mContext;
 
-    public HorizontalAdapter(Context mContext, ArrayList<Book> data)
+    public HorizontalAdapter(Context mContext, ArrayList<Book> book)
     {
         this.mContext =mContext;
-        this.dataList = data;
+        this.bookList = book;
     }
 
 
@@ -60,8 +61,8 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
                     byte[] byteArray = stream.toByteArray();
 
                     intent.putExtra("poster", byteArray);
-                    intent.putExtra("title", dataList.get(position).getTitle());
-                    intent.putExtra("sentence", dataList.get(position).getSentence());
+                    intent.putExtra("title", bookList.get(position).getTitle());
+                    intent.putExtra("sentence", bookList.get(position).getSentence());
                     intent.putExtra("book_position", position);
 
                     mContext.startActivity(intent);
@@ -82,16 +83,16 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
     @Override
     public void onBindViewHolder(final HorizontalViewHolder horizontalViewHolder, final int position)
     {
-        Book m = dataList.get(position);
+        Book m = bookList.get(position);
         horizontalViewHolder.image.setImageBitmap(m.getBitmap());
-        horizontalViewHolder.title.setText(dataList.get(position).getTitle());
-        horizontalViewHolder.sentence.setText(dataList.get(position).getSentence());
+        horizontalViewHolder.title.setText(bookList.get(position).getTitle());
+        horizontalViewHolder.sentence.setText(bookList.get(position).getSentence());
 
         horizontalViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 //                remove(horizontalViewHolder.getAdapterPosition());
-//                notifyDataSetChanged();
+//                notifybookSetChanged();
 //                final List<String> ListItems = new ArrayList<>();
 //                ListItems.add("삭제");
 //                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
@@ -134,13 +135,13 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
 
     @Override
     public int getItemCount() {
-        return (null != dataList ? dataList.size():0);
+        return (null != bookList ? bookList.size():0);
     }
 
 
     public void remove(int position){
         try{
-            dataList.remove(position);
+            bookList.remove(position);
             notifyItemRemoved(position); //새로고침(notufy)을 해야 화면상에 변화가 바로 일어남
         } catch (IndexOutOfBoundsException ex){
             ex.printStackTrace();

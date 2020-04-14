@@ -29,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textColor="@color/colorBlack"
             android:textAlignment="center"
             android:textSize="16dp"
             android:gravity="center_horizontal" />
@@ -38,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textColor="@color/colorBlack"
             android:textAlignment="center"
             android:textSize="12dp"
             android:gravity="center_horizontal"

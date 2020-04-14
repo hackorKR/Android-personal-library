@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ArrayList<Shelf> allShelfList = new ArrayList();
 
-    private Shelf shelf = new Shelf("책장");
-
     //어댑터를 여기에 선언해야 notifyData를 다른데에서도 쓸 수 있다.
     private VerticalAdapter verticalAdapter;
 
@@ -61,10 +59,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ItemTouchHelper helper;
 
     //Activity
-    //Floating 버튼 변수 선언
-    private FloatingActionButton fab_main, fab_sub1, fab_sub2;
-    private Animation fab_open, fab_close;
-    private boolean isFabOpen = false;
+
+    //Custom Fab 튼 변수 선언
+    private com.github.clans.fab.FloatingActionButton fab_bookAdd, fab_shelfAdd;
 
     //shelf_position를 전역변수를 받음
     //전역변수야 하는 이유는 내가 선택한 책장의 번호가 다른 메서드에도 전달되고 사용되어야 하기 때문이다.
@@ -77,19 +74,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
-
-        //Floating Button 구현부
-        fab_open =  AnimationUtils.loadAnimation(this, R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(this, R.anim.fab_close);
-
-        fab_main = (FloatingActionButton) findViewById(R.id.fab_main);
-        fab_sub1 = (FloatingActionButton) findViewById(R.id.fab_sub1);
-        fab_sub2 = (FloatingActionButton) findViewById(R.id.fab_sub2);
-
-        fab_main.setOnClickListener(this);
-        fab_sub1.setOnClickListener(this);
-        fab_sub2.setOnClickListener(this);
-
+        //Custom Fab 구현부
+        fab_bookAdd = findViewById(R.id.fab_bookAdd);
+        fab_shelfAdd = findViewById(R.id.fab_shelfAdd);
+        fab_bookAdd.setOnClickListener(this);
+        fab_shelfAdd.setOnClickListener(this);
 
         //툴바구현
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -146,31 +135,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
     }
 
+    //데이터가 저장되는 순간
     public void onPause() {
         super.onPause();
         Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
 
         //책장과 책을 SharedPreference에 저장하는 코드
-        for(int i = 0; i < allMovieList.size(); i++){
+        for(int i = 0; i < allShelfList.size(); i++){
             setSettingShelfData(i);
             Log.d("onStop에서 일어나는 일", "책장 저장");
-            for(int j = 0; j < allMovieList.get(i).size(); j++){
+            for(int j = 0; j < allShelfList.get(i).bookList.size(); j++){
                 setSettingBookData(i, j);
                 Log.d("onStop에서 일어나는 일", "책 저장");
             }
             verticalAdapter.notifyDataSetChanged();
         }
 
-        int[] book_count = new int[allMovieList.size()];
-        for(int i = 0; i< allMovieList.size(); i++){
-            book_count[i] = allMovieList.get(i).size();
+        int[] book_count = new int[allShelfList.size()];
+        for(int i = 0; i< allShelfList.size(); i++){
+            book_count[i] = allShelfList.get(i).bookList.size();
         }
 
         SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
         //shelf_count 저장
-        editor.putInt("shelf_count", allMovieList.size());
+        editor.putInt("shelf_count", allShelfList.size());
 
         //book_count 번호를 붙여서 저장
         for(int i = 0; i < book_count.length; i++){
@@ -182,50 +172,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         editor.commit();
     }
-    //데이터가 저장되는 순간
+
     public void onStop() {
         super.onStop();
         Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
-
-//        //책장과 책을 SharedPreference에 저장하는 코드
-//        for(int i = 0; i < allMovieList.size(); i++){
-//            setSettingShelfData(i);
-//            Log.d("onStop에서 일어나는 일", "책장 저장");
-//            for(int j = 0; j < allMovieList.get(i).size(); j++){
-//                setSettingBookData(i, j);
-//                Log.d("onStop에서 일어나는 일", "책 저장");
-//            }
-//            verticalAdapter.notifyDataSetChanged();
-//        }
-//
-//        int[] book_count = new int[allMovieList.size()];
-//        for(int i = 0; i< allMovieList.size(); i++){
-//            book_count[i] = allMovieList.get(i).size();
-//        }
-//
-//        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-//
-//        //shelf_count 저장
-//        editor.putInt("shelf_count", allMovieList.size());
-//
-//        //book_count 번호를 붙여서 저장
-//        for(int i = 0; i < book_count.length; i++){
-//            editor.putInt("book_count"+i, book_count[i]);
-//        }
-//
-//        //book_count_size 저장
-//        editor.putInt("book_count_size", book_count.length);
-//
-//        editor.commit();
     }
 
     //저장되어있는 ShelfData 정보를 가져오는 코드
     private void getSettingShelfData(int shelf_position){
         SharedPreferences shelfData = getSharedPreferences("shelfData" + shelf_position, MODE_PRIVATE);
         String shelf_title = shelfData.getString("shelf_title", "");
-        ArrayList<Book> bookList = new ArrayList<>();
-        allMovieList.add(bookList);
+        Shelf shelf = new Shelf(shelf_title);
+//        ArrayList<Book> bookList = new ArrayList<>();
+//        allMovieList.add(bookList);
+
+        allShelfList.add(shelf);
     }
 
     //저장되어있는 BookData 정보를 가져오는 코드
@@ -252,27 +213,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
-        allMovieList.get(shelf_position).add(book_position, new Book(bitmap, book_title, book_sentence));
+        allShelfList.get(shelf_position).bookList.add(book_position, new Book(bitmap, book_title, book_sentence));
     }
 
 
-    //책장의 데이터를 SharedPreference에 저장
+    //shelfData를 SharedPreference에 저장
     private void setSettingShelfData(int shelf_position) {
         SharedPreferences shelfData = getSharedPreferences("shelfData"+shelf_position, MODE_PRIVATE);
         SharedPreferences.Editor editor = shelfData.edit();
-        editor.putString("shelf_title", "책장5");
+        editor.putString("shelf_title", allShelfList.get(shelf_position).shelf_title);
         editor.commit();
     }
 
-    //책의 데이터를 SharedPreference에 저장
+    //bookData를 SharedPreference에 저장
     private void setSettingBookData(int shelf_position, int book_position) {
         SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
         SharedPreferences.Editor editor = bookData.edit();
 
-        editor.putString("book_title", allMovieList.get(shelf_position).get(book_position).getTitle());
-        editor.putString("book_sentence", allMovieList.get(shelf_position).get(book_position).getSentence());
+        editor.putString("book_title", allShelfList.get(shelf_position).bookList.get(book_position).getTitle());
+        editor.putString("book_sentence", allShelfList.get(shelf_position).bookList.get(book_position).getSentence());
 
-        Bitmap bitmap = allMovieList.get(shelf_position).get(book_position).getBitmap();
+        Bitmap bitmap = allShelfList.get(shelf_position).bookList.get(book_position).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
@@ -365,13 +326,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String value = shelfadd_title.getText().toString();
-//                shelf_title.setText(value); 여기서 책장 이름을 변경
+                /*allShelfList.get(shelf_position).setShelf_title(value);
+                shelf_title.setText(value);*/
 
                 Toast.makeText(MainActivity.this, "확인 버튼 클릭됨" + value, Toast.LENGTH_SHORT).show();
 
-                //비어있는 무비리스트를 책장에 추가
-                ArrayList<Book> bookList = new ArrayList();
-                allMovieList.add(bookList);
+                //비어있는 책장리스트를 책장에 추가
+                Shelf shelf = new Shelf(value); //입력한 이름을 받아 책장을 만듬
+                allShelfList.add(shelf); //책장 리스트에 그 이름을 가진 책장이 추가됨
                 verticalAdapter.notifyDataSetChanged();
 
                 dialog.dismiss();
@@ -393,8 +355,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //shelf_position의 값을 설정하는 메서드이다.
     public void alertShow2(){
         final List<String> ListItems = new ArrayList<>();
-        for(int i= 0; i < allMovieList.size(); i++){
-            ListItems.add("책장이라구요!" + (i+1));
+        for(int i= 0; i < allShelfList.size(); i++){
+            ListItems.add(allShelfList.get(i).shelf_title);
         }
         final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -404,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String selectedText = items[pos].toString();
                 Toast.makeText(MainActivity.this, selectedText, Toast.LENGTH_SHORT).show();
 
-                for(int i = 0; i < allMovieList.size(); i++){
+                for(int i = 0; i < allShelfList.size(); i++){
                     if(pos == i){
                         Intent intent = new Intent(MainActivity.this, BookNewActivity.class);
                         shelf_position = i;
@@ -440,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
                 //선택한 책장 맨 앞에 내가 입력한 책 정보를 추가
-                allMovieList.get(shelf_position).add(0, new Book(bitmap, book_title, book_sentence));
+                allShelfList.get(shelf_position).bookList.add(0, new Book(bitmap, book_title, book_sentence));
 
                 //화면 새로고침
                 verticalAdapter.notifyDataSetChanged();
@@ -448,42 +410,266 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //Floating 버튼 사용
-    private void toggleFab() {
-        if (isFabOpen) {
-            fab_main.setImageResource(R.drawable.ic_add_circle_white);
-            fab_sub1.startAnimation(fab_close);
-            fab_sub2.startAnimation(fab_close);
-            fab_sub1.setClickable(false);
-            fab_sub2.setClickable(false);
-            isFabOpen = false;
-        } else {
-            fab_main.setImageResource(R.drawable.ic_close_circle_white);
-            fab_sub1.startAnimation(fab_open);
-            fab_sub2.startAnimation(fab_open);
-            fab_sub1.setClickable(true);
-            fab_sub2.setClickable(true);
-            isFabOpen = true;
-        }
-    }
-
     //Floting 버튼 클릭 이벤트
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.fab_main:
-                toggleFab();
-                break;
-            case R.id.fab_sub1:
-                toggleFab();
+            //case R.id.fab_main:
+                //toggleFab();
+                //break;
+            case R.id.fab_shelfAdd:
                 Toast.makeText(this, "책장 추가", Toast.LENGTH_SHORT).show();
                 alertShow();
                 break;
-            case R.id.fab_sub2:
-                toggleFab();
+            case R.id.fab_bookAdd:
                 Toast.makeText(this, "책 추가", Toast.LENGTH_SHORT).show();
                 alertShow2();
                 break;
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //allMovieList를 전부 allShelfList로 바꾼다면??
+
+//    public void onPause() {
+//        super.onPause();
+//        Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
+//
+//        //책장과 책을 SharedPreference에 저장하는 코드
+//        for(int i = 0; i < allMovieList.size(); i++){
+//            setSettingShelfData(i);
+//            Log.d("onStop에서 일어나는 일", "책장 저장");
+//            for(int j = 0; j < allMovieList.get(i).size(); j++){
+//                setSettingBookData(i, j);
+//                Log.d("onStop에서 일어나는 일", "책 저장");
+//            }
+//            verticalAdapter.notifyDataSetChanged();
+//        }
+//
+//        int[] book_count = new int[allMovieList.size()];
+//        for(int i = 0; i< allMovieList.size(); i++){
+//            book_count[i] = allMovieList.get(i).size();
+//        }
+//
+//        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = preferences.edit();
+//
+//        //shelf_count 저장
+//        editor.putInt("shelf_count", allMovieList.size());
+//
+//        //book_count 번호를 붙여서 저장
+//        for(int i = 0; i < book_count.length; i++){
+//            editor.putInt("book_count"+i, book_count[i]);
+//        }
+//
+//        //book_count_size 저장
+//        editor.putInt("book_count_size", book_count.length);
+//
+//        editor.commit();
+//    }
+//    //데이터가 저장되는 순간
+//    public void onStop() {
+//        super.onStop();
+//        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
+//
+////        //책장과 책을 SharedPreference에 저장하는 코드
+////        for(int i = 0; i < allMovieList.size(); i++){
+////            setSettingShelfData(i);
+////            Log.d("onStop에서 일어나는 일", "책장 저장");
+////            for(int j = 0; j < allMovieList.get(i).size(); j++){
+////                setSettingBookData(i, j);
+////                Log.d("onStop에서 일어나는 일", "책 저장");
+////            }
+////            verticalAdapter.notifyDataSetChanged();
+////        }
+////
+////        int[] book_count = new int[allMovieList.size()];
+////        for(int i = 0; i< allMovieList.size(); i++){
+////            book_count[i] = allMovieList.get(i).size();
+////        }
+////
+////        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
+////        SharedPreferences.Editor editor = preferences.edit();
+////
+////        //shelf_count 저장
+////        editor.putInt("shelf_count", allMovieList.size());
+////
+////        //book_count 번호를 붙여서 저장
+////        for(int i = 0; i < book_count.length; i++){
+////            editor.putInt("book_count"+i, book_count[i]);
+////        }
+////
+////        //book_count_size 저장
+////        editor.putInt("book_count_size", book_count.length);
+////
+////        editor.commit();
+//    }
+//
+//    //저장되어있는 ShelfData 정보를 가져오는 코드
+//    private void getSettingShelfData(int shelf_position){
+//        SharedPreferences shelfData = getSharedPreferences("shelfData" + shelf_position, MODE_PRIVATE);
+//        String shelf_title = shelfData.getString("shelf_title", "");
+//        ArrayList<Book> bookList = new ArrayList<>();
+//        allMovieList.add(bookList);
+//    }
+//
+//    //저장되어있는 BookData 정보를 가져오는 코드
+//    private void getSettingBookData(int shelf_position, int book_position){
+//        SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
+//        String book_title = bookData.getString("book_title", "");
+//        String book_sentence = bookData.getString("book_sentence", "");
+//        String stringByteArray = bookData.getString("book_poster", null);
+//        Log.d("onCreate에서 일어남", stringByteArray);
+//        byte[] arr = null;
+//
+//        if(stringByteArray != null){
+//
+//            byte[] array = stringByteArray.getBytes();
+//            Log.e("onCreate에서 일어남", array.toString());
+//
+//            String[] stringByteArrays = stringByteArray.substring(1, stringByteArray.length()-1).replace(" ", "").split(",");
+//            byte[] byteArray = new byte[stringByteArrays.length];
+//            for(int i = 0; i <stringByteArrays.length; i++){
+//                byteArray[i] = Byte.parseByte(stringByteArrays[i]);
+//            }
+//
+//            arr = byteArray;
+//        }
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+//
+//        allMovieList.get(shelf_position).add(book_position, new Book(bitmap, book_title, book_sentence));
+//    }
+//
+//    //책의 데이터를 SharedPreference에 저장
+//    private void setSettingBookData(int shelf_position, int book_position) {
+//        SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
+//        SharedPreferences.Editor editor = bookData.edit();
+//
+//        editor.putString("book_title", allMovieList.get(shelf_position).get(book_position).getTitle());
+//        editor.putString("book_sentence", allMovieList.get(shelf_position).get(book_position).getSentence());
+//
+//        Bitmap bitmap = allMovieList.get(shelf_position).get(book_position).getBitmap();
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//        byte[] byteArray = stream.toByteArray();
+//
+//        //비트맵->바이트어레이->스트링
+//        editor.putString("book_poster", Arrays.toString(byteArray));
+//        editor.commit();
+//    }
+//
+//    //다이얼로그 책장추가 버튼 메서드
+//    public void alertShow(){
+//        View dialogView = getLayoutInflater().inflate(R.layout.alertdialog_shelfadd, null);
+//        final EditText shelfadd_title = (EditText)dialogView.findViewById(R.id.shelfadd_title);
+//        final TextView shelf_title =(TextView)findViewById(R.id.shelf_title);
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setView(dialogView);
+//
+//        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                String value = shelfadd_title.getText().toString();
+////                shelf_title.setText(value); 여기서 책장 이름을 변경
+//
+//                Toast.makeText(MainActivity.this, "확인 버튼 클릭됨" + value, Toast.LENGTH_SHORT).show();
+//
+//                //비어있는 무비리스트를 책장에 추가
+//                ArrayList<Book> bookList = new ArrayList();
+//                allMovieList.add(bookList);
+//                verticalAdapter.notifyDataSetChanged();
+//
+//                dialog.dismiss();
+//            }
+//        });
+//        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Toast.makeText(MainActivity.this, "취소 버튼 클릭됨", Toast.LENGTH_SHORT).show();
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        AlertDialog alertDialog = builder.create();
+//        alertDialog.show();
+//    }
+//
+//    //책장에 책을 추가하는 메서드
+//    //shelf_position의 값을 설정하는 메서드이다.
+//    public void alertShow2(){
+//        final List<String> ListItems = new ArrayList<>();
+//        for(int i= 0; i < allMovieList.size(); i++){
+//            ListItems.add("책장이라구요!" + (i+1));
+//        }
+//        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//        builder.setTitle("책장 선택하기");
+//        builder.setItems(items, new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int pos) {
+//                String selectedText = items[pos].toString();
+//                Toast.makeText(MainActivity.this, selectedText, Toast.LENGTH_SHORT).show();
+//
+//                for(int i = 0; i < allMovieList.size(); i++){
+//                    if(pos == i){
+//                        Intent intent = new Intent(MainActivity.this, BookNewActivity.class);
+//                        shelf_position = i;
+//                        startActivityForResult(intent, BOOK_ADD);
+//                        break;
+//                    }
+//                }
+//            }
+//        });
+//        builder.show();
+//    }
+//
+//    //startActivityForResult 돌아온 정보를 처리하는 곳
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (resultCode != RESULT_OK)
+//            return;
+//        switch (requestCode){
+//            //없앨 기능이기 때문에 툴바 오른쪽 메뉴를 제거하면 없애도됨
+//            case REQ_CODE_SELECT_IMAGE:
+//                Toast.makeText(this, "갤러리에서 이미지 보기만 하는 인텐트", Toast.LENGTH_SHORT).show();
+//                break;
+//            //책을 추가하는 메서드에서 보낸 startActivityForResult 결과를 처리하는 곳
+//            case BOOK_ADD:
+//                Toast.makeText(this, "책추가를 했을시 보이는 인텐트", Toast.LENGTH_SHORT).show();
+//
+//                String book_title = data.getStringExtra("book_title");
+//                String book_sentence = data.getStringExtra("book_sentence");
+//
+//                //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
+//                byte[] arr = data.getByteArrayExtra("book_poster");
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+//
+//                //선택한 책장 맨 앞에 내가 입력한 책 정보를 추가
+//                allMovieList.get(shelf_position).add(0, new Book(bitmap, book_title, book_sentence));
+//
+//                //화면 새로고침
+//                verticalAdapter.notifyDataSetChanged();
+//                break;
+//        }
+//    }
+
 }

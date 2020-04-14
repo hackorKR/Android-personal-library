@@ -85,14 +85,14 @@ public class BookNewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                        Log.d("Tag", "권한 설정 완료");
-//                    } else {
-//                        Log.d("Tag", "권한 설정 요청");
-//                        ActivityCompat.requestPermissions(BookNewActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-//                    }
-//                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Tag", "권한 설정 완료");
+                    } else {
+                        Log.d("Tag", "권한 설정 요청");
+                        ActivityCompat.requestPermissions(BookNewActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    }
+                }
 
                 final List<String> ListItems = new ArrayList<>();
                 ListItems.add("카메라로 찍어서 가져오기");

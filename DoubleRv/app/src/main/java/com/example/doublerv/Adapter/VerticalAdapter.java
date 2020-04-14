@@ -55,7 +55,6 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
 //        protected Button shelfItem_add;
 
         protected ImageView shelfItem_edit;
-        protected TextView shelf_count;
 
         public VerticalViewHolder(@NonNull View view)
         {
@@ -65,17 +64,9 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
 //            this.shelfItem_add = (Button)itemView.findViewById(R.id.shelfItem_add);
 
             this.shelfItem_edit = (ImageView)itemView.findViewById(R.id.shelfItem_add);
-            this.shelf_count = (TextView)itemView.findViewById(R.id.shelf_count);
         }
 
     }
-//    public String getShelfTitle() {
-//        return shelf_title.getText().toString();
-//    }
-//
-//    public void setShelfTitle(String shelf) {
-//        this.shelf_title.setText(shelf);
-//    }
 
     @NonNull
     @Override
@@ -90,22 +81,15 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
     public void onBindViewHolder(@NonNull final VerticalAdapter.VerticalViewHolder verticalViewHolder, final int position) {
 
         //HorizontalAdapter 를 가져와 여기 리사이클러뷰에 붙인다.
-        HorizontalAdapter adapter = new HorizontalAdapter(mContext, AllBookList.get(position));
+        //HorizontalAdapter adapter = new HorizontalAdapter(mContext, AllBookList.get(position));
         //ShelfList에서 가져오는 bookList
-        //HorizontalAdapter asd = new HorizontalAdapter(mContext, ShelfList.get(position).bookList);
+        HorizontalAdapter asd = new HorizontalAdapter(mContext, ShelfList.get(position).bookList);
 
         verticalViewHolder.recyclerView.setHasFixedSize(true);
         verticalViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL,false));
-        verticalViewHolder.recyclerView.setAdapter(adapter);
+        verticalViewHolder.recyclerView.setAdapter(asd);
 
-        //책장 안에 있는 번호를 누를 경우 일어나는 일
-        verticalViewHolder.itemView.setTag(position);
-        verticalViewHolder.shelf_count.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                verticalViewHolder.shelf_count.setText("5");
-            }
-        });
+        verticalViewHolder.shelf_title.setText(ShelfList.get(position).shelf_title);
 
         //편집을 누르면 책장 이름을 바꿀 수 있다.
         verticalViewHolder.shelfItem_edit.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +122,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         String value = shelfadd_title.getText().toString();
+                                        ShelfList.get(position).setShelf_title(value);
                                         verticalViewHolder.shelf_title.setText(value);
 
                                         Toast.makeText(mContext, "확인 버튼 클릭됨" + value, Toast.LENGTH_SHORT).show();
@@ -194,6 +179,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ShelfViewActivity.class);
                 intent.putExtra("shelf_position", verticalViewHolder.getAdapterPosition());
+                intent.putExtra("shelf_title", ShelfList.get(verticalViewHolder.getAdapterPosition()).shelf_title);
                 mContext.startActivity(intent);
             }
         });
@@ -233,7 +219,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
     //책장제거
     public void remove(int position){
         try{
-            AllBookList.remove(position);
+            ShelfList.remove(position);
             //새로고침(notify)을 해야 화면상에 변화가 바로 일어남
             notifyItemRemoved(position);
         } catch (IndexOutOfBoundsException ex){
@@ -241,48 +227,28 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
         }
     }
 
-    //책장 옆에 추가를 누르면 책이 동적으로 할당되는 코드
-    public void itemAdd(int position){
-        ArrayList<Book> bookList = new ArrayList();
-        ArrayList<Book> bookList2 = new ArrayList();
-        try{
-            Toast.makeText(mContext, AllBookList.get(position).toString(),Toast.LENGTH_LONG).show();
-
-            for(int i =0; i < AllBookList.get(position).size(); i++){
-                bookList2.add(AllBookList.get(position).get(i));
-                Log.d("key", "영화리스트 늘어나는부분");
-            }
-
-            Bitmap book_homo= BitmapFactory.decodeResource(mContext.getResources(), R.drawable.book_homo);
-            bookList.add(new Book(book_homo, "호모데우스", "신이 되는 인간의 미래를 상상해본다"));
-            bookList.addAll(bookList2);
-
-            AllBookList.set(position, bookList);
-
-        } catch(IndexOutOfBoundsException ex){
-            ex.printStackTrace();
-        }
-    }
-
-
     public boolean onItemMove(int from_position,int to_position){
         //이동할 객체 저장
-        ArrayList<Book> allBooklist = AllBookList.get(from_position);
+        Shelf shelf = new Shelf(ShelfList.get(from_position).shelf_title);
+        shelf.bookList = (ShelfList.get(from_position).bookList);
         //이동할 객체 삭제
-        AllBookList.remove(from_position);
+        ShelfList.remove(from_position);
         //이동하고 싶은 position에 추가
-        AllBookList.add(to_position,allBooklist);
+        ShelfList.add(to_position, shelf);
         //Adapter에 데이터 이동을 알림
         notifyDataSetChanged();
         return true;
     }
     //swipe를 쓰기 위해서는 callback에 가서 코드를 수정해야함
     public void onItemSwipe(int position){
-        AllBookList.remove(position);
+        ShelfList.remove(position);
         notifyDataSetChanged();
     }
     @Override
-    public int getItemCount() {
+    /*public int getItemCount() {
         return (null!= AllBookList? AllBookList.size() : 0);
+    }*/
+    public int getItemCount() {
+        return (null!= ShelfList? ShelfList.size() : 0);
     }
 }
