@@ -112,6 +112,7 @@ public class VerticalAdapter extends RecyclerView.Adapter<VerticalAdapter.Vertic
                                 LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
                                 View dialogView = inflater.inflate(R.layout.alertdialog_shelfadd, null);
                                 final EditText shelfadd_title = (EditText)dialogView.findViewById(R.id.shelfadd_title);
+                                shelfadd_title.setText(ShelfList.get(position).shelf_title);
                                 TextView shelfadd_name = (TextView)dialogView.findViewById(R.id.shelfadd_name);
                                 shelfadd_name.setText("책장 이름 편집");
 

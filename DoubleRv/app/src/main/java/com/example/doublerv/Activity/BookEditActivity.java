@@ -3,6 +3,7 @@ package com.example.doublerv.Activity;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,13 +29,14 @@ import com.example.doublerv.R;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BookEditActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ImageView poster;
-    private EditText title, sentence;
+    private EditText title, sentence, author;
     private Button save;
     private final int GET_GALLERY_IMAGE =200;
     private int shelf_position = 0;
@@ -59,6 +61,7 @@ public class BookEditActivity extends AppCompatActivity {
         title = findViewById(R.id.newbook_title);
         sentence = findViewById(R.id.newbook_sentence);
         poster = (ImageView)findViewById(R.id.newbook_image);
+        author = findViewById(R.id.newbook_author);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -67,6 +70,8 @@ public class BookEditActivity extends AppCompatActivity {
         title.setText(bundle.getString("book_title"));
         sentence.setText(bundle.getString("book_sentence"));
         this.book_position = (bundle.getInt("book_position"));
+        author.setText(bundle.getString("book_author"));
+        shelf_position = bundle.getInt("shelf_position");
 
         //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
         byte[] arr = intent.getByteArrayExtra("book_poster");
@@ -90,6 +95,18 @@ public class BookEditActivity extends AppCompatActivity {
                 intent.putExtra("book_sentence", sentence.getText().toString());
                 intent.putExtra("book_poster", byteArray);
                 intent.putExtra("book_position", book_position);
+                intent.putExtra("book_author", author.getText().toString());
+
+                SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
+                SharedPreferences.Editor editor = bookData.edit();
+
+                editor.putString("book_title", title.getText().toString());
+                editor.putString("book_sentence", sentence.getText().toString());
+                editor.putString("book_author", author.getText().toString());
+
+                //비트맵->바이트어레이->스트링
+                editor.putString("book_poster", Arrays.toString(byteArray));
+                editor.commit();
 
                 setResult(RESULT_OK, intent);
                 finish();

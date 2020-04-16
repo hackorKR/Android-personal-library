@@ -89,6 +89,7 @@ public class ShelfViewActivity extends AppCompatActivity {
         String book_title = bookData.getString("book_title", "");
         String book_sentence = bookData.getString("book_sentence", "");
         String stringByteArray = bookData.getString("book_poster", null);
+        String book_author = bookData.getString("book_author", "");
         Log.d("onCreate에서 일어남", stringByteArray);
         byte[] arr = null;
 
@@ -107,22 +108,22 @@ public class ShelfViewActivity extends AppCompatActivity {
         }
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
-        bookList.add(book_position, new Book(bitmap, book_title, book_sentence));
+        bookList.add(book_position, new Book(bitmap, book_title, book_author, book_sentence, shelf_position));
     }
 
 
-    public void initializeData() {
-
-        Bitmap book_titan = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_titan);
-        Bitmap book_perfect = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_perfect);
-        Bitmap book_sayno = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_sayno);
-
-        bookList.add(new Book(book_titan, "타이탄의 도구들", "상위 20퍼 재주 여러개가 상위 1퍼 재주 하나보다 낫다."));
-        bookList.add(new Book(book_perfect, "완벽한 공부법", "완벽하게 공부하는 방법은 없다"));
-        bookList.add(new Book(book_sayno, "세이노의 가르침", "인생이 마음에 들지 않는다면 분노해야할 대상은 세상이 아니라 너 자신이다."));
-
-
-    }
+//    public void initializeData() {
+//
+//        Bitmap book_titan = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_titan);
+//        Bitmap book_perfect = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_perfect);
+//        Bitmap book_sayno = BitmapFactory.decodeResource(this.getResources(), R.drawable.book_sayno);
+//
+//        bookList.add(new Book(book_titan, "타이탄의 도구들", "상위 20퍼 재주 여러개가 상위 1퍼 재주 하나보다 낫다."));
+//        bookList.add(new Book(book_perfect, "완벽한 공부법", "완벽하게 공부하는 방법은 없다"));
+//        bookList.add(new Book(book_sayno, "세이노의 가르침", "인생이 마음에 들지 않는다면 분노해야할 대상은 세상이 아니라 너 자신이다."));
+//
+//
+//    }
 
     //뒤로가기버튼 이전 액티비티로 이동
     public boolean onOptionsItemSelected(MenuItem item) {

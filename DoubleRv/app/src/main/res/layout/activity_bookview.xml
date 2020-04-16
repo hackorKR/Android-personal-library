@@ -33,25 +33,63 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="50dp">
 
-                <EditText
-                    android:id="@+id/bookview_title"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="제목">
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="제목: "
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:id="@+id/bookview_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="제목"
+                        android:textSize="20sp"
+                        android:ems="10"/>
+                </LinearLayout>
 
-                </EditText>
-
-                <EditText
-                    android:id="@+id/bookview_sentence"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="한줄평"
-                    android:ems="10">
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="저자: "
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:id="@+id/bookview_author"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="저자"
+                        android:textSize="20sp"
+                        android:ems="10"/>
+                </LinearLayout>
 
-                </EditText>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="한줄평: "
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:id="@+id/bookview_sentence"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="한줄평"
+                        android:textSize="20sp"
+                        android:ems="10"/>
+                </LinearLayout>
+
+
 
 <!--                <EditText-->
 <!--                    android:id="@+id/bookview_content"-->
@@ -64,6 +102,7 @@
 <!--                </EditText>-->
 
             </LinearLayout>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

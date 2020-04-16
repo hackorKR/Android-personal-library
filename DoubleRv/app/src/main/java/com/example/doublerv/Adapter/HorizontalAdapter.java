@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,11 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.doublerv.Activity.BookViewActivity;
 import com.example.doublerv.ClassData.Book;
 //import com.example.doublerv.Classbook.Book;
+import com.example.doublerv.ClassData.Shelf;
 import com.example.doublerv.R;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.HorizontalViewHolder> {
 
@@ -60,10 +65,14 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
 
+                    Log.d("아이템을 클릭할때", position +" 존재하냐?");
+
                     intent.putExtra("poster", byteArray);
                     intent.putExtra("title", bookList.get(position).getTitle());
                     intent.putExtra("sentence", bookList.get(position).getSentence());
                     intent.putExtra("book_position", position);
+                    intent.putExtra("author", bookList.get(position).getAuthor());
+                    intent.putExtra("shelf_position", bookList.get(position).getShelf_position());
 
                     mContext.startActivity(intent);
                 }
@@ -86,48 +95,33 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
         Book m = bookList.get(position);
         horizontalViewHolder.image.setImageBitmap(m.getBitmap());
         horizontalViewHolder.title.setText(bookList.get(position).getTitle());
-        horizontalViewHolder.sentence.setText(bookList.get(position).getSentence());
+
+        //작가를 맨밑에 표시하도록 만듬
+        horizontalViewHolder.sentence.setText(bookList.get(position).getAuthor());
 
         horizontalViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                remove(horizontalViewHolder.getAdapterPosition());
-//                notifybookSetChanged();
-//                final List<String> ListItems = new ArrayList<>();
-//                ListItems.add("삭제");
-//                final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//                builder.setTitle("책 삭제");
-//                builder.setItems(items, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int pos) {
-//                        String selectedText = items[pos].toString();
-//                        Toast.makeText(mContext, selectedText, Toast.LENGTH_SHORT).show();
-//                        switch (pos){
-//                            case 0:
-                                AlertDialog.Builder builder2 = new AlertDialog.Builder(mContext);
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(mContext);
 
-                                builder2.setTitle("선택한 책 삭제").setMessage("정말로 삭제하시겠습니까?");
+                builder2.setTitle("선택한 책 삭제").setMessage("정말로 삭제하시겠습니까?");
 
-                                builder2.setPositiveButton("확인", new DialogInterface.OnClickListener(){
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int id)
-                                    {
-                                        remove(horizontalViewHolder.getAdapterPosition());
-                                    }
-                                });
+                builder2.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        remove(horizontalViewHolder.getAdapterPosition());
+                    }
+                });
 
-                                builder2.setNegativeButton("취소", new DialogInterface.OnClickListener(){
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int id)
-                                    {
-                                    }
-                                });
-                                AlertDialog alertDialog2 = builder2.create();
-                                alertDialog2.show();
-//                    }
-//                });
-//                builder.show();
+                builder2.setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                    }
+                });
+                AlertDialog alertDialog2 = builder2.create();
+                alertDialog2.show();
                 return true;
             }
         });

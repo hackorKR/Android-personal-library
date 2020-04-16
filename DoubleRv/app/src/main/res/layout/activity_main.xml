@@ -1,95 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:context=".Activity.MainActivity">
+        layout="@layout/toolbar"/>
 
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/toolbar" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewVertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:scrollbarStyle="outsideOverlay"/>
-
-
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/imgFour"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="16dp"-->
-<!--            android:clickable="true"-->
-<!--            android:layout_gravity="end|bottom"-->
-<!--            android:src="@drawable/ic_add_circle"-->
-<!--            app:backgroundTint="@color/colorWhite"/>-->
-    </LinearLayout>
-
-    <com.github.clans.fab.FloatingActionMenu
-        android:padding="5dp"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/main_time"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        fab:menu_animationDelayPerItem="55"
-        fab:menu_backgroundColor="@android:color/transparent"
-        fab:menu_buttonSpacing="0dp"
-        fab:menu_colorNormal="@color/colorDarkBlue"
-        fab:menu_colorRipple="#99d4d4d4"
-        fab:menu_colorPressed="@color/colorDarkBlue"
-        fab:menu_fab_size="normal"
-        fab:menu_icon="@drawable/fab_add"
-        fab:menu_labels_colorNormal="#444"
-        fab:menu_labels_colorPressed="#444"
-        fab:menu_labels_colorRipple="#66efecec"
-        fab:menu_labels_cornerRadius="3dp"
-        fab:menu_labels_ellipsize="none"
-        fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-        fab:menu_labels_maxLines="-1"
-        fab:menu_labels_position="left"
-        fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
-        fab:menu_labels_showShadow="true"
-        fab:menu_labels_singleLine="false"
-        fab:menu_labels_textColor="#f2f1f1"
-        fab:menu_openDirection="up"
-        fab:menu_shadowColor="#66aff198"
-        fab:menu_shadowRadius="4dp"
-        fab:menu_shadowXOffset="1dp"
-        fab:menu_shadowYOffset="4dp"
-        fab:menu_showShadow="true"
-        >
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_shelfAdd"
+        android:gravity="right"
+        android:text="시간"/>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/main_drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:context=".Activity.MainActivity">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewVertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                android:scrollbarStyle="outsideOverlay"/>
+
+
+            <!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+            <!--            android:id="@+id/imgFour"-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:layout_margin="16dp"-->
+            <!--            android:clickable="true"-->
+            <!--            android:layout_gravity="end|bottom"-->
+            <!--            android:src="@drawable/ic_add_circle"-->
+            <!--            app:backgroundTint="@color/colorWhite"/>-->
+        </LinearLayout>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_shelf_add_white"
-            fab:fab_label="책장 추가"
-            fab:fab_size="normal"
-            fab:fab_colorNormal="@color/colorDarkBlue"
-            fab:fab_colorPressed="@color/colorDarkBlue"
-            />
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_bookAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_book_add_white"
-            fab:fab_colorNormal="@color/colorDarkBlue"
-            fab:fab_colorPressed="@color/colorDarkBlue"
-            fab:fab_label="책 추가"
-            fab:fab_size="normal"
-            />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            fab:menu_animationDelayPerItem="55"
+            fab:menu_backgroundColor="@android:color/transparent"
+            fab:menu_buttonSpacing="0dp"
+            fab:menu_colorNormal="@color/colorDarkBlue"
+            fab:menu_colorRipple="#99d4d4d4"
+            fab:menu_colorPressed="@color/colorDarkBlue"
+            fab:menu_fab_size="normal"
+            fab:menu_icon="@drawable/fab_add"
+            fab:menu_labels_colorNormal="#444"
+            fab:menu_labels_colorPressed="#444"
+            fab:menu_labels_colorRipple="#66efecec"
+            fab:menu_labels_cornerRadius="3dp"
+            fab:menu_labels_ellipsize="none"
+            fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+            fab:menu_labels_maxLines="-1"
+            fab:menu_labels_position="left"
+            fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+            fab:menu_labels_showShadow="true"
+            fab:menu_labels_singleLine="false"
+            fab:menu_labels_textColor="#f2f1f1"
+            fab:menu_openDirection="up"
+            fab:menu_shadowColor="#66aff198"
+            fab:menu_shadowRadius="4dp"
+            fab:menu_shadowXOffset="1dp"
+            fab:menu_shadowYOffset="4dp"
+            fab:menu_showShadow="true"
+            >
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab_shelfAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_shelf_add_white"
+                fab:fab_label="책장 추가"
+                fab:fab_size="normal"
+                fab:fab_colorNormal="@color/colorDarkBlue"
+                fab:fab_colorPressed="@color/colorDarkBlue"
+                />
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab_bookAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_book_add_white"
+                fab:fab_colorNormal="@color/colorDarkBlue"
+                fab:fab_colorPressed="@color/colorDarkBlue"
+                fab:fab_label="책 추가"
+                fab:fab_size="normal"
+                />
 
-    </com.github.clans.fab.FloatingActionMenu>
+        </com.github.clans.fab.FloatingActionMenu>
+        </RelativeLayout>
 
-</RelativeLayout>
+        <!--드로어 화면이 될 Layout-->
+        <RelativeLayout
+            android:id="@+id/drawer"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:background="#ffffff"
+            android:layout_gravity="start">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="23dp"
+                android:text="드로어가 될 화면"
+                android:textColor="#f70"
+                android:textSize="24dp" />
+            <Button
+                android:id="@+id/thread_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="쓰레드 켜기"
+                android:layout_above="@+id/thread_stop">
+            </Button>
+            <Button
+                android:id="@+id/thread_stop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="쓰레드 끄기"
+                android:layout_above="@+id/btn_CloseDrawer">
+            </Button>
+
+            <Button
+                android:id="@+id/btn_CloseDrawer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:text="드로어 닫기" />
+
+        </RelativeLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+
+
+</LinearLayout>

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -35,9 +41,13 @@ import com.example.doublerv.R;
 import com.example.doublerv.ClassData.Shelf;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.w3c.dom.Text;
+
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -63,9 +73,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Custom Fab 튼 변수 선언
     private com.github.clans.fab.FloatingActionButton fab_bookAdd, fab_shelfAdd;
 
+    //툴바선언
+    Toolbar toolbar;
+
     //shelf_position를 전역변수를 받음
     //전역변수야 하는 이유는 내가 선택한 책장의 번호가 다른 메서드에도 전달되고 사용되어야 하기 때문이다.
     private int shelf_position;
+
+    //DrawerLayout를 밖에서 선언
+    private DrawerLayout drawerLayout;
+    private View drawerView;
+
+    //Thread와 핸들러 구현
+    Thread thread, thread2;
+    boolean isThread = true;
+    boolean isThread2 = true;
+    Button thread_start, thread_stop;
+    TextView main_time;
+    //일반 쓰레드에서 요청한 화면처리용 핸들러
+    Displayhandler displayhandler;
+
 
     //onCreate에는 앱 실행시 가져와야할 데이터와 표시될 설정들을 띄운다.
     @Override
@@ -74,6 +101,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
+        //전체화면인 main_drawLayout 객체 참조
+        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawerLayout);
+        //Drawer 화면(뷰) 객체 참조
+        drawerView = (View)findViewById(R.id.drawer);
+
+        Button btnCloseDrawer = (Button)findViewById(R.id.btn_CloseDrawer);
+        btnCloseDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.closeDrawer(drawerView);
+            }
+        });
+
+        //쓰레드 구현
+        thread_start = findViewById(R.id.thread_start);
+        thread_stop = findViewById(R.id.thread_stop);
+        thread_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isThread = true;
+                thread = new Thread(){
+                    public void run(){
+                        while (isThread){
+                            try {
+                                handler1.sendEmptyMessage(0);
+                                sleep(3000);
+                                handler2.sendEmptyMessage(0);
+                                sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                };
+                thread.start();
+            }
+        });
+        thread_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isThread = false;
+            }
+        });
+
+        //시간구현
+        main_time=(TextView)findViewById(R.id.main_time);
+        ThreadClass thread2 = new ThreadClass();
+        thread2.start();
+        displayhandler = new Displayhandler();
+
+
+
+
         //Custom Fab 구현부
         fab_bookAdd = findViewById(R.id.fab_bookAdd);
         fab_shelfAdd = findViewById(R.id.fab_shelfAdd);
@@ -81,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab_shelfAdd.setOnClickListener(this);
 
         //툴바구현
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
         //굳이 이걸해줄 필요없이 툴바 title은 string.xml파일에서 app_name를 바꾸면 된다.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -100,9 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         helper = new ItemTouchHelper(new ItemTouchHelperCallBack(verticalAdapter));
         helper.attachToRecyclerView(view);
 
-
-        //하드코딩 부분
-        //this.initializeData();
+        //카운터 파일에서 정보 가져오기
         SharedPreferences pref = getSharedPreferences("count", MODE_PRIVATE);
         int shelfCount = pref.getInt("shelf_count", 0);
         int size = pref.getInt("book_count_size", 0);
@@ -123,17 +201,88 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("onCreate에서 일어나는 일", "책 불러옴");
             }
         }
+        verticalAdapter.notifyDataSetChanged();
+
     }
 
+    //화면과 관련된 작업에 필요한 데이터를 가져온다.(이곳에서)
+    class ThreadClass extends Thread{
+        public void run(){
+            int x = 10;
+            int y = 20;
+            while(isThread2){
+                long now = System.currentTimeMillis();
+                SystemClock.sleep(100);
+                displayhandler.sendEmptyMessage(0);
+//                SystemClock.sleep(300);
+//                displayhandler.sendEmptyMessage(1);
+                //핸들러 요청을 할 때 화면 처리를 위한 데이터를 전달한다.
+//                SystemClock.sleep(100);
+//                Message msg = new Message();
+//                msg.what = 2;
+//                msg.arg1 = ++x; //정수값
+//                msg.arg2 = ++y;
+//                msg.obj = now;
+
+//                displayhandler.sendMessage(msg);
+            }
+        }
+    }
+    //화면에 관련된 작업만 한다.
+
+    class Displayhandler extends Handler{
+        //개발자가 발생시킨 쓰래드에서 화면에 관련된 처리를 하기 위해 작업을 요청하면
+        //자동으로 호출되는 메서드(메인 쓰래드)
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String getTime = simpleDate.format(date);
+            main_time.setText("날짜와 시간: " + getTime);
+//            switch (msg.what){
+//                case 0:
+//                    main_time.setText("핸들러 작업1");
+//                    break;
+//                case 1:
+//                    main_time.setText("날짜와 시간: " + getTime);
+//                    break;
+//                case 2:
+//                    main_time.setText(msg.arg1 + ", " + msg.arg2 + ", " + msg.obj);
+//        }
+        }
+    }
+
+
+    private Handler handler1 = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            toolbar.setTitle("나만의 도서관");
+        }
+    };
+
+    private Handler handler2 = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            toolbar.setTitle("Personal Library");
+        }
+    };
     //생명주기 토스트 찍기
     public void onStart() {
         super.onStart();
         Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
+        verticalAdapter.notifyDataSetChanged();
     }
     public void onResume() {
         super.onResume();
         Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
     }
+    public void onDestroy() {
+        super.onDestroy();
+        isThread2 = false;
+    }
+
 
     //데이터가 저장되는 순간
     public void onPause() {
@@ -195,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String book_title = bookData.getString("book_title", "");
         String book_sentence = bookData.getString("book_sentence", "");
         String stringByteArray = bookData.getString("book_poster", null);
+        String book_author = bookData.getString("book_author", "");
         Log.d("onCreate에서 일어남", stringByteArray);
         byte[] arr = null;
 
@@ -213,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
-        allShelfList.get(shelf_position).bookList.add(book_position, new Book(bitmap, book_title, book_sentence));
+        allShelfList.get(shelf_position).bookList.add(book_position, new Book(bitmap, book_title, book_author, book_sentence, shelf_position));
     }
 
 
@@ -232,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         editor.putString("book_title", allShelfList.get(shelf_position).bookList.get(book_position).getTitle());
         editor.putString("book_sentence", allShelfList.get(shelf_position).bookList.get(book_position).getSentence());
+        editor.putString("book_author", allShelfList.get(shelf_position).bookList.get(book_position).getAuthor());
 
         Bitmap bitmap = allShelfList.get(shelf_position).bookList.get(book_position).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -299,6 +450,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //툴바의 기능들을 클릭시 나타나는 이벤트
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
         switch (item.getItemId()){
+            case android.R.id.home:
+                drawerLayout.openDrawer(drawerView);
+                break;
             case R.id.item_share:
                 Toast.makeText(this, "share is pressed", Toast.LENGTH_SHORT).show();
                 //공유할 수 있는 프로그램을 여는 인텐트
@@ -386,23 +540,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (resultCode != RESULT_OK)
             return;
         switch (requestCode){
-                //없앨 기능이기 때문에 툴바 오른쪽 메뉴를 제거하면 없애도됨
+            //없앨 기능이기 때문에 툴바 오른쪽 메뉴를 제거하면 없애도됨
             case REQ_CODE_SELECT_IMAGE:
                 Toast.makeText(this, "갤러리에서 이미지 보기만 하는 인텐트", Toast.LENGTH_SHORT).show();
                 break;
-                //책을 추가하는 메서드에서 보낸 startActivityForResult 결과를 처리하는 곳
+            //책을 추가하는 메서드에서 보낸 startActivityForResult 결과를 처리하는 곳
             case BOOK_ADD:
                 Toast.makeText(this, "책추가를 했을시 보이는 인텐트", Toast.LENGTH_SHORT).show();
 
                 String book_title = data.getStringExtra("book_title");
                 String book_sentence = data.getStringExtra("book_sentence");
+                String book_author = data.getStringExtra("book_author");
 
                 //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
                 byte[] arr = data.getByteArrayExtra("book_poster");
                 Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
                 //선택한 책장 맨 앞에 내가 입력한 책 정보를 추가
-                allShelfList.get(shelf_position).bookList.add(0, new Book(bitmap, book_title, book_sentence));
+                allShelfList.get(shelf_position).bookList.add(0, new Book(bitmap, book_title, book_author, book_sentence, shelf_position));
 
                 //화면 새로고침
                 verticalAdapter.notifyDataSetChanged();
@@ -415,8 +570,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             //case R.id.fab_main:
-                //toggleFab();
-                //break;
+            //toggleFab();
+            //break;
             case R.id.fab_shelfAdd:
                 Toast.makeText(this, "책장 추가", Toast.LENGTH_SHORT).show();
                 alertShow();
@@ -427,249 +582,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //allMovieList를 전부 allShelfList로 바꾼다면??
-
-//    public void onPause() {
-//        super.onPause();
-//        Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
-//
-//        //책장과 책을 SharedPreference에 저장하는 코드
-//        for(int i = 0; i < allMovieList.size(); i++){
-//            setSettingShelfData(i);
-//            Log.d("onStop에서 일어나는 일", "책장 저장");
-//            for(int j = 0; j < allMovieList.get(i).size(); j++){
-//                setSettingBookData(i, j);
-//                Log.d("onStop에서 일어나는 일", "책 저장");
-//            }
-//            verticalAdapter.notifyDataSetChanged();
-//        }
-//
-//        int[] book_count = new int[allMovieList.size()];
-//        for(int i = 0; i< allMovieList.size(); i++){
-//            book_count[i] = allMovieList.get(i).size();
-//        }
-//
-//        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-//
-//        //shelf_count 저장
-//        editor.putInt("shelf_count", allMovieList.size());
-//
-//        //book_count 번호를 붙여서 저장
-//        for(int i = 0; i < book_count.length; i++){
-//            editor.putInt("book_count"+i, book_count[i]);
-//        }
-//
-//        //book_count_size 저장
-//        editor.putInt("book_count_size", book_count.length);
-//
-//        editor.commit();
-//    }
-//    //데이터가 저장되는 순간
-//    public void onStop() {
-//        super.onStop();
-//        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
-//
-////        //책장과 책을 SharedPreference에 저장하는 코드
-////        for(int i = 0; i < allMovieList.size(); i++){
-////            setSettingShelfData(i);
-////            Log.d("onStop에서 일어나는 일", "책장 저장");
-////            for(int j = 0; j < allMovieList.get(i).size(); j++){
-////                setSettingBookData(i, j);
-////                Log.d("onStop에서 일어나는 일", "책 저장");
-////            }
-////            verticalAdapter.notifyDataSetChanged();
-////        }
-////
-////        int[] book_count = new int[allMovieList.size()];
-////        for(int i = 0; i< allMovieList.size(); i++){
-////            book_count[i] = allMovieList.get(i).size();
-////        }
-////
-////        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
-////        SharedPreferences.Editor editor = preferences.edit();
-////
-////        //shelf_count 저장
-////        editor.putInt("shelf_count", allMovieList.size());
-////
-////        //book_count 번호를 붙여서 저장
-////        for(int i = 0; i < book_count.length; i++){
-////            editor.putInt("book_count"+i, book_count[i]);
-////        }
-////
-////        //book_count_size 저장
-////        editor.putInt("book_count_size", book_count.length);
-////
-////        editor.commit();
-//    }
-//
-//    //저장되어있는 ShelfData 정보를 가져오는 코드
-//    private void getSettingShelfData(int shelf_position){
-//        SharedPreferences shelfData = getSharedPreferences("shelfData" + shelf_position, MODE_PRIVATE);
-//        String shelf_title = shelfData.getString("shelf_title", "");
-//        ArrayList<Book> bookList = new ArrayList<>();
-//        allMovieList.add(bookList);
-//    }
-//
-//    //저장되어있는 BookData 정보를 가져오는 코드
-//    private void getSettingBookData(int shelf_position, int book_position){
-//        SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
-//        String book_title = bookData.getString("book_title", "");
-//        String book_sentence = bookData.getString("book_sentence", "");
-//        String stringByteArray = bookData.getString("book_poster", null);
-//        Log.d("onCreate에서 일어남", stringByteArray);
-//        byte[] arr = null;
-//
-//        if(stringByteArray != null){
-//
-//            byte[] array = stringByteArray.getBytes();
-//            Log.e("onCreate에서 일어남", array.toString());
-//
-//            String[] stringByteArrays = stringByteArray.substring(1, stringByteArray.length()-1).replace(" ", "").split(",");
-//            byte[] byteArray = new byte[stringByteArrays.length];
-//            for(int i = 0; i <stringByteArrays.length; i++){
-//                byteArray[i] = Byte.parseByte(stringByteArrays[i]);
-//            }
-//
-//            arr = byteArray;
-//        }
-//        Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
-//
-//        allMovieList.get(shelf_position).add(book_position, new Book(bitmap, book_title, book_sentence));
-//    }
-//
-//    //책의 데이터를 SharedPreference에 저장
-//    private void setSettingBookData(int shelf_position, int book_position) {
-//        SharedPreferences bookData = getSharedPreferences("bookData" + shelf_position + book_position, MODE_PRIVATE);
-//        SharedPreferences.Editor editor = bookData.edit();
-//
-//        editor.putString("book_title", allMovieList.get(shelf_position).get(book_position).getTitle());
-//        editor.putString("book_sentence", allMovieList.get(shelf_position).get(book_position).getSentence());
-//
-//        Bitmap bitmap = allMovieList.get(shelf_position).get(book_position).getBitmap();
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//        byte[] byteArray = stream.toByteArray();
-//
-//        //비트맵->바이트어레이->스트링
-//        editor.putString("book_poster", Arrays.toString(byteArray));
-//        editor.commit();
-//    }
-//
-//    //다이얼로그 책장추가 버튼 메서드
-//    public void alertShow(){
-//        View dialogView = getLayoutInflater().inflate(R.layout.alertdialog_shelfadd, null);
-//        final EditText shelfadd_title = (EditText)dialogView.findViewById(R.id.shelfadd_title);
-//        final TextView shelf_title =(TextView)findViewById(R.id.shelf_title);
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setView(dialogView);
-//
-//        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                String value = shelfadd_title.getText().toString();
-////                shelf_title.setText(value); 여기서 책장 이름을 변경
-//
-//                Toast.makeText(MainActivity.this, "확인 버튼 클릭됨" + value, Toast.LENGTH_SHORT).show();
-//
-//                //비어있는 무비리스트를 책장에 추가
-//                ArrayList<Book> bookList = new ArrayList();
-//                allMovieList.add(bookList);
-//                verticalAdapter.notifyDataSetChanged();
-//
-//                dialog.dismiss();
-//            }
-//        });
-//        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                Toast.makeText(MainActivity.this, "취소 버튼 클릭됨", Toast.LENGTH_SHORT).show();
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        AlertDialog alertDialog = builder.create();
-//        alertDialog.show();
-//    }
-//
-//    //책장에 책을 추가하는 메서드
-//    //shelf_position의 값을 설정하는 메서드이다.
-//    public void alertShow2(){
-//        final List<String> ListItems = new ArrayList<>();
-//        for(int i= 0; i < allMovieList.size(); i++){
-//            ListItems.add("책장이라구요!" + (i+1));
-//        }
-//        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//        builder.setTitle("책장 선택하기");
-//        builder.setItems(items, new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int pos) {
-//                String selectedText = items[pos].toString();
-//                Toast.makeText(MainActivity.this, selectedText, Toast.LENGTH_SHORT).show();
-//
-//                for(int i = 0; i < allMovieList.size(); i++){
-//                    if(pos == i){
-//                        Intent intent = new Intent(MainActivity.this, BookNewActivity.class);
-//                        shelf_position = i;
-//                        startActivityForResult(intent, BOOK_ADD);
-//                        break;
-//                    }
-//                }
-//            }
-//        });
-//        builder.show();
-//    }
-//
-//    //startActivityForResult 돌아온 정보를 처리하는 곳
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (resultCode != RESULT_OK)
-//            return;
-//        switch (requestCode){
-//            //없앨 기능이기 때문에 툴바 오른쪽 메뉴를 제거하면 없애도됨
-//            case REQ_CODE_SELECT_IMAGE:
-//                Toast.makeText(this, "갤러리에서 이미지 보기만 하는 인텐트", Toast.LENGTH_SHORT).show();
-//                break;
-//            //책을 추가하는 메서드에서 보낸 startActivityForResult 결과를 처리하는 곳
-//            case BOOK_ADD:
-//                Toast.makeText(this, "책추가를 했을시 보이는 인텐트", Toast.LENGTH_SHORT).show();
-//
-//                String book_title = data.getStringExtra("book_title");
-//                String book_sentence = data.getStringExtra("book_sentence");
-//
-//                //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
-//                byte[] arr = data.getByteArrayExtra("book_poster");
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
-//
-//                //선택한 책장 맨 앞에 내가 입력한 책 정보를 추가
-//                allMovieList.get(shelf_position).add(0, new Book(bitmap, book_title, book_sentence));
-//
-//                //화면 새로고침
-//                verticalAdapter.notifyDataSetChanged();
-//                break;
-//        }
-//    }
-
 }

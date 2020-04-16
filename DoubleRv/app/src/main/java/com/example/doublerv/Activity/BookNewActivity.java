@@ -33,7 +33,7 @@ public class BookNewActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ImageView poster;
-    private EditText title, sentence;
+    private EditText title, sentence, author;
     private Button save;
     private final int GET_GALLERY_IMAGE =200;
     private int shelf_position = 0;
@@ -57,6 +57,7 @@ public class BookNewActivity extends AppCompatActivity {
         title = findViewById(R.id.newbook_title);
         sentence = findViewById(R.id.newbook_sentence);
         poster = (ImageView)findViewById(R.id.newbook_image);
+        author = findViewById(R.id.newbook_author);
 
         //저장하기 눌렀을때 정보를 보내는 코드
         save = findViewById(R.id.newbook_save);
@@ -73,6 +74,8 @@ public class BookNewActivity extends AppCompatActivity {
                 intent.putExtra("book_title", title.getText().toString());
                 intent.putExtra("book_sentence", sentence.getText().toString());
                 intent.putExtra("book_poster", byteArray);
+                intent.putExtra("book_author", author.getText().toString());
+
 
                 setResult(RESULT_OK, intent);
                 finish();

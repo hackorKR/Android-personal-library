@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -25,10 +27,11 @@ import java.io.ByteArrayOutputStream;
 public class BookViewActivity extends AppCompatActivity {
 
     protected ImageView poster;
-    protected EditText title, sentence;
+    protected TextView title, sentence, author;
     private Toolbar toolbar;
     protected Button edit_edit;
     private int book_position;
+    private int shelf_position;
 
     private static final int EDIT_CODE = 100;
 
@@ -44,18 +47,18 @@ public class BookViewActivity extends AppCompatActivity {
         ActionBar actionBar=getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //툴바 title
-        actionBar.setTitle("책 정보 페이지");
-
         //HorizontalAdapter에서 보내준 정보
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         this.title=findViewById(R.id.bookview_title);
         this.sentence=findViewById(R.id.bookview_sentence);
         this.poster=findViewById(R.id.bookview_poster);
+        this.author=findViewById(R.id.bookview_author);
 
         title.setText(bundle.getString("title"));
         sentence.setText(bundle.getString("sentence"));
+        author.setText(bundle.getString("author"));
+        shelf_position = bundle.getInt("shelf_position");
 
         this.book_position = bundle.getInt("book_position");
 
@@ -63,6 +66,9 @@ public class BookViewActivity extends AppCompatActivity {
         byte[] arr = intent.getByteArrayExtra("poster");
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
         poster.setImageBitmap(bitmap);
+
+        //툴바 title
+        actionBar.setTitle(title.getText().toString());
 
         //수정버튼기능
 //        this.edit_edit=findViewById(R.id.edit_edit);
@@ -82,9 +88,14 @@ public class BookViewActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case android.R.id.home:{ //toolbar의 back키 눌렀을 때 동작
 
+                //뒤로가기버튼
+                //onCreate를 실행시켜야 바뀐 bookData가 적용이 된다.
+                Intent home = new Intent(BookViewActivity.this, MainActivity.class);
+                startActivity(home);
                 finish();
                 return true;
             }
+            //편집모양 아이콘을 누르면 발생
             case R.id.item_edit:
                 Intent intent = new Intent(BookViewActivity.this, BookEditActivity.class);
 
@@ -97,6 +108,8 @@ public class BookViewActivity extends AppCompatActivity {
                 intent.putExtra("book_sentence", sentence.getText().toString());
                 intent.putExtra("book_poster", byteArray);
                 intent.putExtra("book_position", book_position);
+                intent.putExtra("book_author", author.getText().toString());
+                intent.putExtra("shelf_position", shelf_position);
 
                 startActivityForResult(intent, EDIT_CODE);
                 break;
@@ -121,6 +134,7 @@ public class BookViewActivity extends AppCompatActivity {
             case EDIT_CODE:
                 title.setText(data.getStringExtra("book_title"));
                 sentence.setText(data.getStringExtra("book_sentence"));
+                author.setText(data.getStringExtra("book_author"));
 
                 //바이트어레이를 받아와서 비트맵으로 바꾸고 이미지뷰에 띄우기
                 byte[] arr = data.getByteArrayExtra("book_poster");

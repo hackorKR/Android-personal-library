@@ -40,7 +40,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="60dp"
                             android:layout_height="wrap_content"
                             android:text="책제목: "
                             android:textSize="18sp">
@@ -67,7 +67,27 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:text=" 저자:"
+                            android:gravity="center"
+                            android:textSize="18sp">
+
+                        </TextView>
+                        <EditText
+                            android:id="@+id/newbook_author"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="60dp"
                             android:layout_height="wrap_content"
                             android:text="한줄평: "
                             android:textSize="18sp">
