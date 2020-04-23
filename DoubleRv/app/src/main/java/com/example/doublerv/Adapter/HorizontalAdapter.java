@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +43,7 @@ public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.Ho
     }
 
 
-    public class HorizontalViewHolder extends RecyclerView.ViewHolder{
+    public class HorizontalViewHolder extends RecyclerView.ViewHolder {
         protected ImageView image;
         protected TextView title;
         protected TextView sentence;

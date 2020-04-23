@@ -38,6 +38,10 @@
             android:parentActivityName=".Activity.MainActivity">
 
         </activity>
+        <activity android:name=".Activity.BookSearchActivity"
+            android:parentActivityName=".Activity.BookNewActivity">
+
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.doublerv.fileprovider"
