@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
         //Custom Fab 구현부
         fab_bookAdd = findViewById(R.id.fab_bookAdd);
         fab_shelfAdd = findViewById(R.id.fab_shelfAdd);
@@ -228,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-    //화면에 관련된 작업만 한다.
 
+    //화면에 관련된 작업만 한다.
     class Displayhandler extends Handler{
         //개발자가 발생시킨 쓰래드에서 화면에 관련된 처리를 하기 위해 작업을 요청하면
         //자동으로 호출되는 메서드(메인 쓰래드)

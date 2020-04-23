@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -178,6 +179,7 @@ public class BookEditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //&& data.hasExtra("data") 이전 파일 저장하지 않을 때는 이것도 조건에 썻었음
+
         if(resultCode != RESULT_OK)
             return;
         switch (requestCode){
