@@ -9,6 +9,8 @@ public class Book {
     private String author;
     private int shelf_position;
 
+    private int image;
+
 
     public int getShelf_position() {
         return shelf_position;

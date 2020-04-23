@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -32,13 +33,14 @@ import java.util.List;
 public class BookNewActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private ImageView poster;
+    private ImageView poster, search;
     private EditText title, sentence, author;
     private Button save;
     private final int GET_GALLERY_IMAGE =200;
     private int shelf_position = 0;
     private String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
+    static final int TAKE_BOOK_NAVER_API = 100;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,12 +61,36 @@ public class BookNewActivity extends AppCompatActivity {
         poster = (ImageView)findViewById(R.id.newbook_image);
         author = findViewById(R.id.newbook_author);
 
+        search = (ImageView)findViewById(R.id.newbook_search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BookNewActivity.this, BookSearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if(bundle != null){
+            title.setText(bundle.getString("title"));
+            author.setText(bundle.getString("author"));
+            shelf_position = bundle.getInt("shelf_position");
+
+            //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
+            byte[] arr = intent.getByteArrayExtra("image");
+            Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+            poster.setImageBitmap(bitmap);
+        }
+
+
+
         //저장하기 눌렀을때 정보를 보내는 코드
         save = findViewById(R.id.newbook_save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
+                Intent intent = new Intent(BookNewActivity.this, MainActivity.class);
 
                 Bitmap bitmap = ((BitmapDrawable)poster.getDrawable()).getBitmap();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -75,7 +101,6 @@ public class BookNewActivity extends AppCompatActivity {
                 intent.putExtra("book_sentence", sentence.getText().toString());
                 intent.putExtra("book_poster", byteArray);
                 intent.putExtra("book_author", author.getText().toString());
-
 
                 setResult(RESULT_OK, intent);
                 finish();
@@ -169,6 +194,20 @@ public class BookNewActivity extends AppCompatActivity {
                     poster.setImageURI(selectImageUri);
                 }
             }
+//            case TAKE_BOOK_NAVER_API:
+//            {
+//                Intent intent = getIntent();
+//                Bundle bundle = intent.getExtras();
+//
+//                title.setText(bundle.getString("title"));
+//                author.setText(bundle.getString("author"));
+//                shelf_position = bundle.getInt("shelf_position");
+//
+//                //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
+//                byte[] arr = intent.getByteArrayExtra("image");
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+//                poster.setImageBitmap(bitmap);
+//            }
         }
 
     }

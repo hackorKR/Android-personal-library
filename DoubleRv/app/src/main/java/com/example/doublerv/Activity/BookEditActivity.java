@@ -64,6 +64,7 @@ public class BookEditActivity extends AppCompatActivity {
         poster = (ImageView)findViewById(R.id.newbook_image);
         author = findViewById(R.id.newbook_author);
 
+        //BookView에서 오는 intent받기
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
