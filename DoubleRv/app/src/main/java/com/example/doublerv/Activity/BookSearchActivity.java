@@ -51,6 +51,7 @@ public class BookSearchActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Button searchBook_ok, searchBook_search;
     private EditText searchBook_title;
+    private int shelf_position;
 
     private Handler handler;
 
@@ -95,8 +96,10 @@ public class BookSearchActivity extends AppCompatActivity {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
+
                         bookList.clear();
                         getNaverBookSearch(keyword);
+
                     }
                 });thread.start();
                 itemSearchAdapter.notifyDataSetChanged();
@@ -106,8 +109,8 @@ public class BookSearchActivity extends AppCompatActivity {
 
 
     private void getNaverBookSearch(String keyword) {
-        String clientId = "ioUtFMZPH1s3pFPPkl8F"; //애플리케이션 클라이언트 아이디값"
-        String clientSecret = "Sqwtsv2hqX"; //애플리케이션 클라이언트 시크릿값"
+        String clientId = "e5_pqW2q4brVx8PFe81s"; //애플리케이션 클라이언트 아이디값"
+        String clientSecret = "eB482tTPVN"; //애플리케이션 클라이언트 시크릿값"
 
         String text = null;
         try {
@@ -116,7 +119,7 @@ public class BookSearchActivity extends AppCompatActivity {
             throw new RuntimeException("검색어 인코딩 실패",e);
         }
 
-        String apiURL = "https://openapi.naver.com/v1/search/book.json?query=" + text+ "&display=50" + "&start=1";    // json 결과
+        String apiURL = "https://openapi.naver.com/v1/search/book.json?query=" + text+ "&display=10" + "&start=1";    // json 결과
 
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", clientId);

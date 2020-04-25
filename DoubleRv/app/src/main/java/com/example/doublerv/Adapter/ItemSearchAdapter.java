@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.doublerv.Activity.BookNewActivity;
+import com.example.doublerv.Activity.BookNewSearchActivity;
 import com.example.doublerv.Activity.BookSearchActivity;
 import com.example.doublerv.Activity.BookViewActivity;
 import com.example.doublerv.ClassData.Book;
@@ -48,14 +49,12 @@ public class ItemSearchAdapter extends RecyclerView.Adapter<ItemSearchAdapter.It
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                    Intent intent = new Intent(v.getContext(), BookNewActivity.class);
+                    Intent intent = new Intent(v.getContext(), BookNewSearchActivity.class);
 
                     Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
-
-                    Log.d("아이템을 클릭할때", position +" 존재하냐?");
 
                     intent.putExtra("image", byteArray);
                     intent.putExtra("title", bookList.get(position).getTitle());

@@ -202,6 +202,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         verticalAdapter.notifyDataSetChanged();
 
+        //안되면 되게하라
+        //선택한 책장 번호를 shared에 저장해서 onCreate되어도
+        //번호를 받아올 수 있게 만듬
+        SharedPreferences SaveShelfPosition = getSharedPreferences("SaveShelfPosition", MODE_PRIVATE);
+        int save_shelf_position = SaveShelfPosition.getInt("save_shelf_position", 0);
+        //BookNewSearchActivity에서 보낸 intent를 받는 코드
+        Intent intent = getIntent();
+        Bundle data = intent.getExtras();
+        if (data != null) {
+            String book_title = data.getString("book_title");
+            String book_sentence = data.getString("book_sentence");
+            String book_author = data.getString("book_author");
+            int book_shelf_position = data.getInt("book_shelf_position");
+
+            //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
+            byte[] arr = data.getByteArray("book_poster");
+            Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+
+            //선택한 책장 맨 앞에 내가 입력한 책 정보를 추가
+            allShelfList.get(save_shelf_position).bookList.add(0, new Book(bitmap, book_title, book_author, book_sentence, save_shelf_position));
+
+            //화면 새로고침
+            verticalAdapter.notifyDataSetChanged();
+        }
     }
 
     //화면과 관련된 작업에 필요한 데이터를 가져온다.(이곳에서)
@@ -276,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
+        verticalAdapter.notifyDataSetChanged();
     }
     public void onDestroy() {
         super.onDestroy();
@@ -287,6 +312,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onPause() {
         super.onPause();
         Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onStop() {
+        super.onStop();
+        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
 
         //책장과 책을 SharedPreference에 저장하는 코드
         for(int i = 0; i < allShelfList.size(); i++){
@@ -319,11 +349,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putInt("book_count_size", book_count.length);
 
         editor.commit();
-    }
-
-    public void onStop() {
-        super.onStop();
-        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
     }
 
     //저장되어있는 ShelfData 정보를 가져오는 코드
@@ -523,6 +548,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(pos == i){
                         Intent intent = new Intent(MainActivity.this, BookNewActivity.class);
                         shelf_position = i;
+                        //BookSearch를 위한 책장 번호 저장
+                        SharedPreferences SaveShelfPosition = getSharedPreferences("SaveShelfPosition", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = SaveShelfPosition.edit();
+                        editor.putInt("save_shelf_position", i);
+                        editor.commit();
                         startActivityForResult(intent, BOOK_ADD);
                         break;
                     }

@@ -30,13 +30,13 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookNewActivity extends AppCompatActivity {
+public class BookNewSearchActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ImageView poster, search;
     private EditText title, sentence, author;
     private Button save;
-    private final int GET_GALLERY_IMAGE =200;
+    private final int GET_GALLERY_IMAGE = 200;
     private int shelf_position = 0;
     private String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -46,11 +46,11 @@ public class BookNewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newbook);
 
-        toolbar=findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //뒤로가기 버튼
-        ActionBar actionBar=getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         //툴바 title
@@ -58,24 +58,37 @@ public class BookNewActivity extends AppCompatActivity {
 
         title = findViewById(R.id.newbook_title);
         sentence = findViewById(R.id.newbook_sentence);
-        poster = (ImageView)findViewById(R.id.newbook_image);
+        poster = (ImageView) findViewById(R.id.newbook_image);
         author = findViewById(R.id.newbook_author);
 
-        search = (ImageView)findViewById(R.id.newbook_search);
+        search = (ImageView) findViewById(R.id.newbook_search);
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BookNewActivity.this, BookSearchActivity.class);
+                Intent intent = new Intent(BookNewSearchActivity.this, BookSearchActivity.class);
                 startActivity(intent);
             }
         });
 
-        //저장하기 눌렀을때 정보를 보내는 코드
+        //ItemSearchAdapter에서 보낸 intent를 받는 코드
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            title.setText(bundle.getString("title"));
+            author.setText(bundle.getString("author"));
+            shelf_position = bundle.getInt("shelf_position");
+
+            //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
+            byte[] arr = intent.getByteArrayExtra("image");
+            Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+            poster.setImageBitmap(bitmap);
+        }
+
         save = findViewById(R.id.newbook_save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BookNewActivity.this, MainActivity.class);
+                Intent intent = new Intent(BookNewSearchActivity.this, MainActivity.class);
 
                 Bitmap bitmap = ((BitmapDrawable)poster.getDrawable()).getBitmap();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -86,12 +99,13 @@ public class BookNewActivity extends AppCompatActivity {
                 intent.putExtra("book_sentence", sentence.getText().toString());
                 intent.putExtra("book_poster", byteArray);
                 intent.putExtra("book_author", author.getText().toString());
+                intent.putExtra("book_shelf_position", shelf_position);
 
-                setResult(RESULT_OK, intent);
+
+                startActivity(intent);
                 finish();
             }
         });
-
 
         //이미지를 눌렀을 때 갤러리에서 사진가져오는 버튼
         poster.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +117,7 @@ public class BookNewActivity extends AppCompatActivity {
                         Log.d("Tag", "권한 설정 완료");
                     } else {
                         Log.d("Tag", "권한 설정 요청");
-                        ActivityCompat.requestPermissions(BookNewActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                        ActivityCompat.requestPermissions(BookNewSearchActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                     }
                 }
 
@@ -112,12 +126,12 @@ public class BookNewActivity extends AppCompatActivity {
                 ListItems.add("갤러리에서 사진 가져오기");
                 final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(BookNewActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(BookNewSearchActivity.this);
                 builder.setTitle("사진 가져오기");
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int pos) {
                         String selectedText = items[pos].toString();
-                        Toast.makeText(BookNewActivity.this, selectedText, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BookNewSearchActivity.this, selectedText, Toast.LENGTH_SHORT).show();
                         switch (pos){
                             case 0:
                                 //처음 액티비티가 생성되는 부분인 onCreate에서 사용자에게 permission을 받음
@@ -179,21 +193,6 @@ public class BookNewActivity extends AppCompatActivity {
                     poster.setImageURI(selectImageUri);
                 }
             }
-//            case TAKE_BOOK_NAVER_API:
-//            {
-//                Intent intent = getIntent();
-//                Bundle bundle = intent.getExtras();
-//
-//                title.setText(bundle.getString("title"));
-//                author.setText(bundle.getString("author"));
-//                shelf_position = bundle.getInt("shelf_position");
-//
-//                //이미지 정보가 담겨있는 바이트어레이를 받아서 비트맵으로 전환
-//                byte[] arr = intent.getByteArrayExtra("image");
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
-//                poster.setImageBitmap(bitmap);
-//            }
         }
-
     }
 }

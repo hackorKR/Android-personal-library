@@ -42,6 +42,9 @@
             android:parentActivityName=".Activity.BookNewActivity">
 
         </activity>
+        <activity android:name=".Activity.BookNewSearchActivity">
+
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.doublerv.fileprovider"
